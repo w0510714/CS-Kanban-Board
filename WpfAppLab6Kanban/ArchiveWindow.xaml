@@ -14,18 +14,18 @@
             <Button Content="Cleanup: Delete All Archived" Click="DeleteAll_Click" HorizontalAlignment="Right" Padding="10,5" Background="#D32F2F" Foreground="White" BorderThickness="0"/>
         </DockPanel>
 
-        <ListView x:Name="ArchiveListView" Grid.Row="1" ItemsSource="{Binding ArchivedTasks}">
+        <ListView x:Name="ArchiveListView" Grid.Row="1" ItemsSource="{Binding ArchivedTasks}" MouseDoubleClick="ArchiveListView_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" Width="150"/>
-                    <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="250"/>
+                    <GridViewColumn Header="Priority" DisplayMemberBinding="{Binding Priority}" Width="80"/>
+                    <GridViewColumn Header="Description" DisplayMemberBinding="{Binding Description}" Width="200"/>
                     <GridViewColumn Header="Archived Date" DisplayMemberBinding="{Binding UpdatedAt}" Width="150"/>
                 </GridView>
             </ListView.View>
         </ListView>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Restore Selected" Width="120" Height="30" Margin="0,0,10,0" Click="Restore_Click" Background="#2196F3" Foreground="White" BorderThickness="0"/>
             <Button Content="Delete Permanently" Width="130" Height="30" Margin="0,0,10,0" Click="Delete_Click" Background="#D32F2F" Foreground="White" BorderThickness="0"/>
             <Button Content="Close" Width="80" Height="30" Click="Close_Click" Background="#DDD" BorderThickness="0"/>
         </StackPanel>

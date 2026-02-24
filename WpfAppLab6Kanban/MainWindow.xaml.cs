@@ -38,6 +38,7 @@ namespace WpfAppLab6Kanban
                     case "Done": DoneTasks.Add(task); break;
                 }
             }
+            UpdateArchiveButtonState();
         }
 
         private void AddTask_Click(object sender, RoutedEventArgs e)
@@ -48,6 +49,7 @@ namespace WpfAppLab6Kanban
             {
                 _db.AddTask(addWindow.NewTask);
                 TodoTasks.Add(addWindow.NewTask);
+                UpdateArchiveButtonState();
             }
         }
 
@@ -55,16 +57,34 @@ namespace WpfAppLab6Kanban
         {
             if (sender is ListBox listBox && listBox.SelectedItem is KanbanTask selectedTask)
             {
+                string originalColumn = selectedTask.Column;
                 var detailWindow = new TaskDetailWindow(selectedTask) { Owner = this };
+                
                 if (detailWindow.ShowDialog() == true)
                 {
-                    _db.UpdateTask(selectedTask);
-
-                    // If the user archived it from the detail window, remove it from the list
-                    if (selectedTask.IsArchived)
+                    if (detailWindow.IsDeleted)
                     {
-                        GetCollection(selectedTask.Column).Remove(selectedTask);
+                        _db.DeleteTask(selectedTask.Id);
+                        GetCollection(originalColumn).Remove(selectedTask);
                     }
+                    else
+                    {
+                        // Update DB (handles Title/Priority/Status changes)
+                        _db.UpdateTask(selectedTask);
+
+                        // If moved or archived, shift collections
+                        if (selectedTask.Column != originalColumn)
+                        {
+                            GetCollection(originalColumn).Remove(selectedTask);
+                            GetCollection(selectedTask.Column).Add(selectedTask);
+                        }
+                        
+                        if (selectedTask.IsArchived)
+                        {
+                            GetCollection(selectedTask.Column).Remove(selectedTask);
+                        }
+                    }
+                    UpdateArchiveButtonState();
                 }
             }
         }
@@ -74,8 +94,33 @@ namespace WpfAppLab6Kanban
             var archiveWindow = new ArchiveWindow { Owner = this };
             archiveWindow.ShowDialog();
             
-            // Re-load main board tasks in case some were restored
             LoadTasks();
+        }
+
+        private void ArchiveAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (TodoTasks.Count == 0 && InProgressTasks.Count == 0 && DoneTasks.Count == 0)
+            {
+                MessageBox.Show("There are no tasks to archive.", "Board Empty", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var result = MessageBox.Show("Are you sure you want to archive all tasks on the board? This ends the current sprint.", "Archive All", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                _db.ArchiveAllTasks();
+                TodoTasks.Clear();
+                InProgressTasks.Clear();
+                DoneTasks.Clear();
+                UpdateArchiveButtonState();
+            }
+        }
+
+        private void UpdateArchiveButtonState()
+        {
+            bool hasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
+            ArchiveAllButton.IsEnabled = hasTasks;
+            ArchiveAllButton.Opacity = hasTasks ? 1.0 : 0.5;
         }
 
         private void MoveLeft_Click(object sender, RoutedEventArgs e)
@@ -143,6 +188,7 @@ namespace WpfAppLab6Kanban
                 {
                     _db.DeleteTask(task.Id);
                     GetCollection(task.Column).Remove(task);
+                    UpdateArchiveButtonState();
                 }
             }
         }

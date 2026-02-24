@@ -1,4 +1,6 @@
+using System;
 using System.Windows;
+using System.Windows.Controls;
 using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban
@@ -24,6 +26,7 @@ namespace WpfAppLab6Kanban
             NewTask = new KanbanTask
             {
                 Title = TitleTextBox.Text.Trim(),
+                Priority = (PriorityComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Medium",
                 Description = DescriptionTextBox.Text.Trim(),
                 Column = "To Do",
                 CreatedAt = DateTime.UtcNow,

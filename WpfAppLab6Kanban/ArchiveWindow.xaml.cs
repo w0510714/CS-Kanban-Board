@@ -27,17 +27,19 @@ namespace WpfAppLab6Kanban
             }
         }
 
-        private void Restore_Click(object sender, RoutedEventArgs e)
+        private void ArchiveListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (ArchiveListView.SelectedItem is KanbanTask selectedTask)
             {
-                _db.RestoreTask(selectedTask.Id);
-                ArchivedTasks.Remove(selectedTask);
-                MessageBox.Show($"'{selectedTask.Title}' restored to the board.", "Restored", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Please select a task to restore.", "Selection Required", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var detailWindow = new TaskDetailWindow(selectedTask) { Owner = this };
+                if (detailWindow.ShowDialog() == true)
+                {
+                    if (detailWindow.IsDeleted)
+                    {
+                        _db.DeleteTask(selectedTask.Id);
+                        ArchivedTasks.Remove(selectedTask);
+                    }
+                }
             }
         }
 

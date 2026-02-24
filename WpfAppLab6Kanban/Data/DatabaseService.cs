@@ -46,6 +46,7 @@ namespace WpfAppLab6Kanban.Data
                     Id          INTEGER PRIMARY KEY AUTOINCREMENT,
                     Title       TEXT    NOT NULL,
                     Description TEXT    NOT NULL DEFAULT '',
+                    Priority    TEXT    NOT NULL DEFAULT 'Medium',
                     Column      TEXT    NOT NULL DEFAULT 'To Do',
                     Position    INTEGER NOT NULL DEFAULT 0,
                     IsArchived  INTEGER NOT NULL DEFAULT 0,
@@ -63,7 +64,14 @@ namespace WpfAppLab6Kanban.Data
                 using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN IsArchived INTEGER NOT NULL DEFAULT 0;", connection);
                 migrateCmd.ExecuteNonQuery();
             }
-            catch { /* Column already exists, ignore error */ }
+            catch { }
+
+            try
+            {
+                using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN Priority TEXT NOT NULL DEFAULT 'Medium';", connection);
+                migrateCmd.ExecuteNonQuery();
+            }
+            catch { }
         }
 
         // ── CREATE ───────────────────────────────────────────────────────────────
@@ -81,14 +89,15 @@ namespace WpfAppLab6Kanban.Data
             connection.Open();
 
             const string sql = """
-                INSERT INTO Tasks (Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt)
-                VALUES (@Title, @Description, @Column, @Position, @IsArchived, @CreatedAt, @UpdatedAt);
+                INSERT INTO Tasks (Title, Description, Priority, Column, Position, IsArchived, CreatedAt, UpdatedAt)
+                VALUES (@Title, @Description, @Priority, @Column, @Position, @IsArchived, @CreatedAt, @UpdatedAt);
                 SELECT last_insert_rowid();
                 """;
 
             using var cmd = new SqliteCommand(sql, connection);
             cmd.Parameters.AddWithValue("@Title",       task.Title);
             cmd.Parameters.AddWithValue("@Description", task.Description);
+            cmd.Parameters.AddWithValue("@Priority",    task.Priority);
             cmd.Parameters.AddWithValue("@Column",      task.Column);
             cmd.Parameters.AddWithValue("@Position",    task.Position);
             cmd.Parameters.AddWithValue("@IsArchived",  task.IsArchived ? 1 : 0);
@@ -115,7 +124,7 @@ namespace WpfAppLab6Kanban.Data
             connection.Open();
 
             const string sql = """
-                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt
+                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt, Priority
                 FROM   Tasks
                 WHERE  IsArchived = 0
                 ORDER  BY Column, Position;
@@ -143,7 +152,7 @@ namespace WpfAppLab6Kanban.Data
             connection.Open();
 
             const string sql = """
-                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt
+                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt, Priority
                 FROM   Tasks
                 WHERE  IsArchived = 1
                 ORDER  BY UpdatedAt DESC;
@@ -171,7 +180,7 @@ namespace WpfAppLab6Kanban.Data
             connection.Open();
 
             const string sql = """
-                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt
+                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt, Priority
                 FROM   Tasks
                 WHERE  IsArchived = 0 AND Column = @Column
                 ORDER  BY Position;
@@ -206,6 +215,7 @@ namespace WpfAppLab6Kanban.Data
                 UPDATE Tasks
                 SET    Title       = @Title,
                        Description = @Description,
+                       Priority    = @Priority,
                        Column      = @Column,
                        Position    = @Position,
                        IsArchived  = @IsArchived,
@@ -216,12 +226,27 @@ namespace WpfAppLab6Kanban.Data
             using var cmd = new SqliteCommand(sql, connection);
             cmd.Parameters.AddWithValue("@Title",       task.Title);
             cmd.Parameters.AddWithValue("@Description", task.Description);
+            cmd.Parameters.AddWithValue("@Priority",    task.Priority);
             cmd.Parameters.AddWithValue("@Column",      task.Column);
             cmd.Parameters.AddWithValue("@Position",    task.Position);
             cmd.Parameters.AddWithValue("@IsArchived",  task.IsArchived ? 1 : 0);
             cmd.Parameters.AddWithValue("@UpdatedAt",   task.UpdatedAt.ToString("o"));
             cmd.Parameters.AddWithValue("@Id",          task.Id);
 
+            cmd.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// Archives every task that is currently on the active board.
+        /// </summary>
+        public void ArchiveAllTasks()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            const string sql = "UPDATE Tasks SET IsArchived = 1 WHERE IsArchived = 0;";
+
+            using var cmd = new SqliteCommand(sql, connection);
             cmd.ExecuteNonQuery();
         }
 
@@ -288,7 +313,8 @@ namespace WpfAppLab6Kanban.Data
                 Position    = reader.GetInt32(4),
                 IsArchived  = reader.GetInt32(5) == 1,
                 CreatedAt   = DateTime.Parse(reader.GetString(6)),
-                UpdatedAt   = DateTime.Parse(reader.GetString(7))
+                UpdatedAt   = DateTime.Parse(reader.GetString(7)),
+                Priority    = reader.GetString(8)
             };
         }
     }

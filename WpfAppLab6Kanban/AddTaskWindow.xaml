@@ -9,6 +9,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -16,10 +18,17 @@
             <TextBlock Text="Task Title" FontWeight="Bold" Foreground="#333" Margin="0,0,0,5"/>
             <TextBox x:Name="TitleTextBox" Grid.Row="1" Margin="0,0,0,15" Padding="5" FontSize="14"/>
 
-            <TextBlock Grid.Row="2" Text="Description (Optional)" FontWeight="Bold" Foreground="#333" Margin="0,0,0,5"/>
-            <TextBox x:Name="DescriptionTextBox" Grid.Row="3" Margin="0,0,0,15" Height="80" TextWrapping="Wrap" AcceptsReturn="True" Padding="5"/>
+            <TextBlock Grid.Row="2" Text="Priority" FontWeight="Bold" Foreground="#333" Margin="0,0,0,5"/>
+            <ComboBox x:Name="PriorityComboBox" Grid.Row="3" Margin="0,0,0,15" Padding="5" SelectedIndex="1">
+                <ComboBoxItem Content="Low"/>
+                <ComboBoxItem Content="Medium"/>
+                <ComboBoxItem Content="High"/>
+            </ComboBox>
 
-            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Grid.Row="4" Text="Description (Optional)" FontWeight="Bold" Foreground="#333" Margin="0,0,0,5"/>
+            <TextBox x:Name="DescriptionTextBox" Grid.Row="5" Margin="0,0,0,15" Height="80" TextWrapping="Wrap" AcceptsReturn="True" Padding="5"/>
+
+            <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Create Task" Width="100" Height="30" Margin="0,0,10,0" Click="CreateButton_Click" IsDefault="True" Background="#4CAF50" Foreground="White" BorderThickness="0"/>
                 <Button Content="Cancel" Width="80" Height="30" Click="CancelButton_Click" IsCancel="True" Background="#DDD" BorderThickness="0"/>
             </StackPanel>
