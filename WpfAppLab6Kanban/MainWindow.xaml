@@ -9,7 +9,7 @@
         Background="{DynamicResource WindowBackgroundBrush}" FontFamily="Segoe UI, Arial">
     
     <Window.Resources>
-        <!-- Modern Pill-Shaped Button Style -->
+        <!-- Modern Oval Button Style -->
         <Style x:Key="ModernPillButton" TargetType="Button">
             <Setter Property="Background" Value="#1A73E8"/>
             <Setter Property="Foreground" Value="White"/>

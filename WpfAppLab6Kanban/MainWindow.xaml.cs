@@ -10,9 +10,12 @@ using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban
 {
+    // INotifyPropertyChanged interface for property change notifications
     public partial class MainWindow : Window, INotifyPropertyChanged
-    {
+    {   
+    // Database service instance
         private DatabaseService _db;
+    // Badge visibility property
         private Visibility _badgeVisibility = Visibility.Visible;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -35,7 +38,7 @@ namespace WpfAppLab6Kanban
             this.DataContext = this;
             LoadTasks();
         }
-
+    // Apply startup settings from database
         private void ApplyStartupSettings()
         {
             bool isDark = _db.GetSetting("DarkMode", "0") == "1";
@@ -44,12 +47,12 @@ namespace WpfAppLab6Kanban
             bool showBadges = _db.GetSetting("ShowBadges", "1") == "1";
             BadgeVisibility = showBadges ? Visibility.Visible : Visibility.Collapsed;
         }
-
+    // Hamburger button click handler
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             HamburgerButton.ContextMenu.IsOpen = true;
         }
-
+    // Settings button click handler
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             if (new SettingsWindow { Owner = this }.ShowDialog() == true)
@@ -57,12 +60,12 @@ namespace WpfAppLab6Kanban
                 ApplyStartupSettings();
             }
         }
-
+    // Help button click handler
         private void Help_Click(object sender, RoutedEventArgs e)
         {
             new HelpWindow { Owner = this }.ShowDialog();
         }
-
+    // Load tasks from database
         private void LoadTasks()
         {
             TodoTasks.Clear();
@@ -80,7 +83,7 @@ namespace WpfAppLab6Kanban
             }
             UpdateArchiveButtonState();
         }
-
+    // Add task button click handler
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new AddTaskWindow { Owner = this };
@@ -91,7 +94,7 @@ namespace WpfAppLab6Kanban
                 UpdateArchiveButtonState();
             }
         }
-
+    // Double-click handler for task list items
         private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is ListBox listBox && listBox.SelectedItem is KanbanTask selectedTask)
@@ -123,7 +126,7 @@ namespace WpfAppLab6Kanban
                 }
             }
         }
-
+    // View archives button click handler
         private void ViewArchives_Click(object sender, RoutedEventArgs e)
         {
             new ArchiveWindow { Owner = this }.ShowDialog();
@@ -139,13 +142,13 @@ namespace WpfAppLab6Kanban
                 LoadTasks();
             }
         }
-
+    // Update archive button state
         private void UpdateArchiveButtonState()
         {
             bool hasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
             if (ArchiveAllMenuItem != null) ArchiveAllMenuItem.IsEnabled = hasTasks;
         }
-
+    // Move task left button click handler
         private void MoveLeft_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is KanbanTask task)
@@ -165,7 +168,7 @@ namespace WpfAppLab6Kanban
                 }
             }
         }
-
+    // Move task right button click handler
         private void MoveRight_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is KanbanTask task)
@@ -185,13 +188,14 @@ namespace WpfAppLab6Kanban
                 }
             }
         }
-
+    // Move task in UI
         private void MoveTaskInUI(KanbanTask task, string from, string to)
         {
             GetCollection(from).Remove(task);
             GetCollection(to).Add(task);
         }
 
+    // Get collection by column name
         private ObservableCollection<KanbanTask> GetCollection(string columnName) => columnName switch
         {
             "To Do" => TodoTasks,
@@ -200,6 +204,7 @@ namespace WpfAppLab6Kanban
             _ => throw new ArgumentException("Invalid column name")
         };
 
+    // Delete task button click handler
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is KanbanTask task)
@@ -212,7 +217,7 @@ namespace WpfAppLab6Kanban
                 }
             }
         }
-
+    // Property changed notification
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
