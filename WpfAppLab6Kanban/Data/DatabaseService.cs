@@ -48,6 +48,7 @@ namespace WpfAppLab6Kanban.Data
                     Description TEXT    NOT NULL DEFAULT '',
                     Column      TEXT    NOT NULL DEFAULT 'To Do',
                     Position    INTEGER NOT NULL DEFAULT 0,
+                    IsArchived  INTEGER NOT NULL DEFAULT 0,
                     CreatedAt   TEXT    NOT NULL,
                     UpdatedAt   TEXT    NOT NULL
                 );
@@ -55,6 +56,14 @@ namespace WpfAppLab6Kanban.Data
 
             using var cmd = new SqliteCommand(createTableSql, connection);
             cmd.ExecuteNonQuery();
+
+            // Migration: Add IsArchived if it doesn't exist (handle existing DB from previous runs)
+            try
+            {
+                using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN IsArchived INTEGER NOT NULL DEFAULT 0;", connection);
+                migrateCmd.ExecuteNonQuery();
+            }
+            catch { /* Column already exists, ignore error */ }
         }
 
         // ── CREATE ───────────────────────────────────────────────────────────────
@@ -72,8 +81,8 @@ namespace WpfAppLab6Kanban.Data
             connection.Open();
 
             const string sql = """
-                INSERT INTO Tasks (Title, Description, Column, Position, CreatedAt, UpdatedAt)
-                VALUES (@Title, @Description, @Column, @Position, @CreatedAt, @UpdatedAt);
+                INSERT INTO Tasks (Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt)
+                VALUES (@Title, @Description, @Column, @Position, @IsArchived, @CreatedAt, @UpdatedAt);
                 SELECT last_insert_rowid();
                 """;
 
@@ -82,6 +91,7 @@ namespace WpfAppLab6Kanban.Data
             cmd.Parameters.AddWithValue("@Description", task.Description);
             cmd.Parameters.AddWithValue("@Column",      task.Column);
             cmd.Parameters.AddWithValue("@Position",    task.Position);
+            cmd.Parameters.AddWithValue("@IsArchived",  task.IsArchived ? 1 : 0);
             cmd.Parameters.AddWithValue("@CreatedAt",   task.CreatedAt.ToString("o")); // ISO-8601
             cmd.Parameters.AddWithValue("@UpdatedAt",   task.UpdatedAt.ToString("o"));
 
@@ -105,8 +115,9 @@ namespace WpfAppLab6Kanban.Data
             connection.Open();
 
             const string sql = """
-                SELECT Id, Title, Description, Column, Position, CreatedAt, UpdatedAt
+                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt
                 FROM   Tasks
+                WHERE  IsArchived = 0
                 ORDER  BY Column, Position;
                 """;
 
@@ -132,9 +143,9 @@ namespace WpfAppLab6Kanban.Data
             connection.Open();
 
             const string sql = """
-                SELECT Id, Title, Description, Column, Position, CreatedAt, UpdatedAt
+                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt
                 FROM   Tasks
-                WHERE  Column = @Column
+                WHERE  IsArchived = 0 AND Column = @Column
                 ORDER  BY Position;
                 """;
 
@@ -169,6 +180,7 @@ namespace WpfAppLab6Kanban.Data
                        Description = @Description,
                        Column      = @Column,
                        Position    = @Position,
+                       IsArchived  = @IsArchived,
                        UpdatedAt   = @UpdatedAt
                 WHERE  Id = @Id;
                 """;
@@ -178,6 +190,7 @@ namespace WpfAppLab6Kanban.Data
             cmd.Parameters.AddWithValue("@Description", task.Description);
             cmd.Parameters.AddWithValue("@Column",      task.Column);
             cmd.Parameters.AddWithValue("@Position",    task.Position);
+            cmd.Parameters.AddWithValue("@IsArchived",  task.IsArchived ? 1 : 0);
             cmd.Parameters.AddWithValue("@UpdatedAt",   task.UpdatedAt.ToString("o"));
             cmd.Parameters.AddWithValue("@Id",          task.Id);
 
@@ -216,8 +229,9 @@ namespace WpfAppLab6Kanban.Data
                 Description = reader.GetString(2),
                 Column      = reader.GetString(3),
                 Position    = reader.GetInt32(4),
-                CreatedAt   = DateTime.Parse(reader.GetString(5)),
-                UpdatedAt   = DateTime.Parse(reader.GetString(6))
+                IsArchived  = reader.GetInt32(5) == 1,
+                CreatedAt   = DateTime.Parse(reader.GetString(6)),
+                UpdatedAt   = DateTime.Parse(reader.GetString(7))
             };
         }
     }

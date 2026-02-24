@@ -13,14 +13,23 @@
         </Grid.RowDefinitions>
 
         <TextBlock Text="Title" FontWeight="Bold" Margin="0,0,0,5"/>
-        <TextBox x:Name="TitleTextBox" Grid.Row="1" Margin="0,0,0,15" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox x:Name="TitleTextBox" Grid.Row="1" Margin="0,0,0,15" Padding="5"/>
 
         <TextBlock Grid.Row="2" Text="Description" FontWeight="Bold" Margin="0,0,0,5"/>
-        <TextBox x:Name="DescriptionTextBox" Grid.Row="3" Margin="0,0,0,15" Height="100" TextWrapping="Wrap" AcceptsReturn="True" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox x:Name="DescriptionTextBox" Grid.Row="3" Margin="0,0,0,15" Height="100" TextWrapping="Wrap" AcceptsReturn="True" Padding="5"/>
 
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Save" Width="80" Margin="0,0,10,0" Click="SaveButton_Click" IsDefault="True"/>
-            <Button Content="Cancel" Width="80" Click="CancelButton_Click" IsCancel="True"/>
-        </StackPanel>
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="ArchiveButton" Grid.Column="0" Content="Archive Task" Click="ArchiveButton_Click" Background="#FF9800" Foreground="White" BorderThickness="0" Padding="10,0" Height="30" VerticalAlignment="Center"/>
+            
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="Save" Width="80" Height="30" Margin="0,0,10,0" Click="SaveButton_Click" IsDefault="True" Background="#4CAF50" Foreground="White" BorderThickness="0"/>
+                <Button Content="Cancel" Width="80" Height="30" Click="CancelButton_Click" IsCancel="True" Background="#DDD" BorderThickness="0"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

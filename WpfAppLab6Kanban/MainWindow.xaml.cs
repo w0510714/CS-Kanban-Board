@@ -42,13 +42,12 @@ namespace WpfAppLab6Kanban
 
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
-            var newTask = new KanbanTask { Title = "New Task", Column = "To Do" };
-            var detailWindow = new TaskDetailWindow(newTask) { Owner = this };
+            var addWindow = new AddTaskWindow { Owner = this };
 
-            if (detailWindow.ShowDialog() == true)
+            if (addWindow.ShowDialog() == true && addWindow.NewTask != null)
             {
-                _db.AddTask(newTask);
-                TodoTasks.Add(newTask);
+                _db.AddTask(addWindow.NewTask);
+                TodoTasks.Add(addWindow.NewTask);
             }
         }
 
@@ -60,6 +59,12 @@ namespace WpfAppLab6Kanban
                 if (detailWindow.ShowDialog() == true)
                 {
                     _db.UpdateTask(selectedTask);
+
+                    // If the user archived it from the detail window, remove it from the list
+                    if (selectedTask.IsArchived)
+                    {
+                        GetCollection(selectedTask.Column).Remove(selectedTask);
+                    }
                 }
             }
         }

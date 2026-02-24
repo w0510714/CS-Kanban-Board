@@ -16,6 +16,7 @@ namespace WpfAppLab6Kanban.Models
         private string _description = string.Empty;
         private string _column      = "To Do";   // "To Do" | "In Progress" | "Done"
         private int    _position;                  // display order within a column
+        private bool   _isArchived;
         private DateTime _createdAt;
         private DateTime _updatedAt;
 
@@ -57,6 +58,13 @@ namespace WpfAppLab6Kanban.Models
         {
             get => _position;
             set { _position = value; OnPropertyChanged(); }
+        }
+
+        /// <summary>Whether the task is hidden from the main board.</summary>
+        public bool IsArchived
+        {
+            get => _isArchived;
+            set { _isArchived = value; OnPropertyChanged(); }
         }
 
         /// <summary>UTC timestamp when the task was first created.</summary>
