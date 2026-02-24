@@ -92,31 +92,37 @@ namespace WpfAppLab6Kanban
             }
         }
 
+        private void HamburgerButton_Click(object sender, RoutedEventArgs e)
+        {
+            HamburgerButton.ContextMenu.IsOpen = true;
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            new SettingsWindow { Owner = this }.ShowDialog();
+        }
+
         private void ViewArchives_Click(object sender, RoutedEventArgs e)
         {
             new ArchiveWindow { Owner = this }.ShowDialog();
-            LoadTasks(); // Refresh board in case any tasks were modified/restored
+            LoadTasks();
         }
 
-        // Archives all active tasks after confirmation
         private void ArchiveAll_Click(object sender, RoutedEventArgs e)
         {
             if (TodoTasks.Count == 0 && InProgressTasks.Count == 0 && DoneTasks.Count == 0) return;
 
-            var result = MessageBox.Show("Archive all tasks and clear the board?", "Confirm Archive", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
+            if (MessageBox.Show("Archive all tasks and clear the board?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 _db.ArchiveAllTasks();
                 LoadTasks();
             }
         }
 
-        // Disables the Archive All button if there's nothing on the board
         private void UpdateArchiveButtonState()
         {
             bool hasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
-            ArchiveAllButton.IsEnabled = hasTasks;
-            ArchiveAllButton.Opacity = hasTasks ? 1.0 : 0.5;
+            if (ArchiveAllMenuItem != null) ArchiveAllMenuItem.IsEnabled = hasTasks;
         }
 
         private void MoveLeft_Click(object sender, RoutedEventArgs e)

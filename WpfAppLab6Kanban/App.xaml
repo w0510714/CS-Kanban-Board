@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:WpfAppLab6Kanban"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#F0F2F5"/>
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="White"/>
+        <SolidColorBrush x:Key="TextBrush" Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#5F6368"/>
+        <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="White"/>
     </Application.Resources>
 </Application>
