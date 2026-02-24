@@ -14,6 +14,7 @@ namespace WpfAppLab6Kanban.Models
         private int    _id;
         private string _title       = string.Empty;
         private string _description = string.Empty;
+        private string _priority    = "Medium"; // Low, Medium, High
         private string _column      = "To Do";   // "To Do" | "In Progress" | "Done"
         private int    _position;                  // display order within a column
         private bool   _isArchived;
@@ -34,6 +35,13 @@ namespace WpfAppLab6Kanban.Models
         {
             get => _title;
             set { _title = value; OnPropertyChanged(); }
+        }
+
+        /// <summary>Task urgency level.</summary>
+        public string Priority
+        {
+            get => _priority;
+            set { _priority = value; OnPropertyChanged(); }
         }
 
         /// <summary>Optional longer description / notes for the task.</summary>

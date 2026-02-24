@@ -41,7 +41,8 @@
         <Border Background="White" Padding="15">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Kanban Board" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                <Button Content="+ Add New Task" Padding="10,5" Click="AddTask_Click" Background="#4CAF50" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
+                <Button Content="+ Add New Task" Padding="10,5" Click="AddTask_Click" Background="#4CAF50" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="0,0,10,0"/>
+                <Button Content="View Archives" Padding="10,5" Click="ViewArchives_Click" Background="#2196F3" Foreground="White" FontWeight="Bold" BorderThickness="0"/>
             </StackPanel>
         </Border>
 

@@ -49,3 +49,5 @@ C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppL
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\TaskDetailWindow.g.cs
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\AddTaskWindow.baml
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\AddTaskWindow.g.cs
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\ArchiveWindow.baml
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\ArchiveWindow.g.cs

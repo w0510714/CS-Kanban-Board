@@ -133,6 +133,34 @@ namespace WpfAppLab6Kanban.Data
         }
 
         /// <summary>
+        /// Returns all tasks that have been archived.
+        /// </summary>
+        public List<KanbanTask> GetArchivedTasks()
+        {
+            var tasks = new List<KanbanTask>();
+
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            const string sql = """
+                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt
+                FROM   Tasks
+                WHERE  IsArchived = 1
+                ORDER  BY UpdatedAt DESC;
+                """;
+
+            using var cmd = new SqliteCommand(sql, connection);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                tasks.Add(MapRow(reader));
+            }
+
+            return tasks;
+        }
+
+        /// <summary>
         /// Returns all tasks that belong to a specific column.
         /// </summary>
         public List<KanbanTask> GetTasksByColumn(string column)
@@ -197,6 +225,21 @@ namespace WpfAppLab6Kanban.Data
             cmd.ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Restores an archived task back to the main board.
+        /// </summary>
+        public void RestoreTask(int taskId)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            const string sql = "UPDATE Tasks SET IsArchived = 0 WHERE Id = @Id;";
+
+            using var cmd = new SqliteCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@Id", taskId);
+            cmd.ExecuteNonQuery();
+        }
+
         // ── DELETE ───────────────────────────────────────────────────────────────
 
         /// <summary>
@@ -211,6 +254,20 @@ namespace WpfAppLab6Kanban.Data
 
             using var cmd = new SqliteCommand(sql, connection);
             cmd.Parameters.AddWithValue("@Id", taskId);
+            cmd.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// Permanently deletes all tasks that are currently archived.
+        /// </summary>
+        public void DeleteAllArchived()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            const string sql = "DELETE FROM Tasks WHERE IsArchived = 1;";
+
+            using var cmd = new SqliteCommand(sql, connection);
             cmd.ExecuteNonQuery();
         }
 

@@ -69,6 +69,15 @@ namespace WpfAppLab6Kanban
             }
         }
 
+        private void ViewArchives_Click(object sender, RoutedEventArgs e)
+        {
+            var archiveWindow = new ArchiveWindow { Owner = this };
+            archiveWindow.ShowDialog();
+            
+            // Re-load main board tasks in case some were restored
+            LoadTasks();
+        }
+
         private void MoveLeft_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.DataContext is KanbanTask task)
