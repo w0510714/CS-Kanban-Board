@@ -9,8 +9,9 @@ namespace WpfAppLab6Kanban
 {
     public partial class MainWindow : Window
     {
-        private readonly DatabaseService _db = new DatabaseService();
+        private DatabaseService _db;
 
+        // Tasks collections bound to the board's three columns
         public ObservableCollection<KanbanTask> TodoTasks { get; set; } = new ObservableCollection<KanbanTask>();
         public ObservableCollection<KanbanTask> InProgressTasks { get; set; } = new ObservableCollection<KanbanTask>();
         public ObservableCollection<KanbanTask> DoneTasks { get; set; } = new ObservableCollection<KanbanTask>();
@@ -18,18 +19,19 @@ namespace WpfAppLab6Kanban
         public MainWindow()
         {
             InitializeComponent();
+            _db = new DatabaseService();
             this.DataContext = this;
             LoadTasks();
         }
 
+        // Fetches non-archived tasks from DB and populates UI collections
         private void LoadTasks()
         {
             TodoTasks.Clear();
             InProgressTasks.Clear();
             DoneTasks.Clear();
 
-            var allTasks = _db.GetAllTasks();
-            foreach (var task in allTasks)
+            foreach (var task in _db.GetAllTasks())
             {
                 switch (task.Column)
                 {
@@ -44,7 +46,6 @@ namespace WpfAppLab6Kanban
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
             var addWindow = new AddTaskWindow { Owner = this };
-
             if (addWindow.ShowDialog() == true && addWindow.NewTask != null)
             {
                 _db.AddTask(addWindow.NewTask);
@@ -64,21 +65,23 @@ namespace WpfAppLab6Kanban
                 {
                     if (detailWindow.IsDeleted)
                     {
+                        // Hard delete from DB and UI
                         _db.DeleteTask(selectedTask.Id);
                         GetCollection(originalColumn).Remove(selectedTask);
                     }
                     else
                     {
-                        // Update DB (handles Title/Priority/Status changes)
+                        // Update changes in DB
                         _db.UpdateTask(selectedTask);
 
-                        // If moved or archived, shift collections
+                        // If column changed (moved), swap UI collections
                         if (selectedTask.Column != originalColumn)
                         {
                             GetCollection(originalColumn).Remove(selectedTask);
                             GetCollection(selectedTask.Column).Add(selectedTask);
                         }
                         
+                        // Handle potential archive from detail window
                         if (selectedTask.IsArchived)
                         {
                             GetCollection(selectedTask.Column).Remove(selectedTask);
@@ -91,31 +94,24 @@ namespace WpfAppLab6Kanban
 
         private void ViewArchives_Click(object sender, RoutedEventArgs e)
         {
-            var archiveWindow = new ArchiveWindow { Owner = this };
-            archiveWindow.ShowDialog();
-            
-            LoadTasks();
+            new ArchiveWindow { Owner = this }.ShowDialog();
+            LoadTasks(); // Refresh board in case any tasks were modified/restored
         }
 
+        // Archives all active tasks after confirmation
         private void ArchiveAll_Click(object sender, RoutedEventArgs e)
         {
-            if (TodoTasks.Count == 0 && InProgressTasks.Count == 0 && DoneTasks.Count == 0)
-            {
-                MessageBox.Show("There are no tasks to archive.", "Board Empty", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
+            if (TodoTasks.Count == 0 && InProgressTasks.Count == 0 && DoneTasks.Count == 0) return;
 
-            var result = MessageBox.Show("Are you sure you want to archive all tasks on the board? This ends the current sprint.", "Archive All", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var result = MessageBox.Show("Archive all tasks and clear the board?", "Confirm Archive", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
                 _db.ArchiveAllTasks();
-                TodoTasks.Clear();
-                InProgressTasks.Clear();
-                DoneTasks.Clear();
-                UpdateArchiveButtonState();
+                LoadTasks();
             }
         }
 
+        // Disables the Archive All button if there's nothing on the board
         private void UpdateArchiveButtonState()
         {
             bool hasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
@@ -171,6 +167,7 @@ namespace WpfAppLab6Kanban
             GetCollection(to).Add(task);
         }
 
+        // Helper to find the correct collection based on column name
         private ObservableCollection<KanbanTask> GetCollection(string columnName) => columnName switch
         {
             "To Do" => TodoTasks,
@@ -183,8 +180,7 @@ namespace WpfAppLab6Kanban
         {
             if (sender is Button btn && btn.DataContext is KanbanTask task)
             {
-                var result = MessageBox.Show($"Are you sure you want to delete '{task.Title}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
+                if (MessageBox.Show($"Permanently delete '{task.Title}'?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     _db.DeleteTask(task.Id);
                     GetCollection(task.Column).Remove(task);

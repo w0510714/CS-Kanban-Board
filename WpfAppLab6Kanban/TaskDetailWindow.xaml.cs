@@ -8,7 +8,7 @@ namespace WpfAppLab6Kanban
     public partial class TaskDetailWindow : Window
     {
         public KanbanTask Task { get; private set; }
-        public bool IsDeleted { get; private set; }
+        public bool IsDeleted { get; private set; } // Flag to tell parent window task was deleted
 
         public TaskDetailWindow(KanbanTask task)
         {
@@ -18,7 +18,7 @@ namespace WpfAppLab6Kanban
             LoadTaskData();
             ApplySecurityRules();
 
-            // Wire up change tracking after initial load
+            // Notify user only when they actually change something
             TitleTextBox.TextChanged += (s, e) => SaveButton.IsEnabled = true;
             DescriptionTextBox.TextChanged += (s, e) => SaveButton.IsEnabled = true;
             PriorityComboBox.SelectionChanged += (s, e) => SaveButton.IsEnabled = true;
@@ -31,7 +31,6 @@ namespace WpfAppLab6Kanban
             StatusLabel.Text = $"Status: {Task.Column.ToUpper()}";
             ArchivedLabel.Text = $"Archived: {(Task.IsArchived ? "YES" : "NO")}";
 
-            // Set Priority ComboBox
             foreach (ComboBoxItem item in PriorityComboBox.Items)
             {
                 if (item.Content.ToString() == Task.Priority)
@@ -42,11 +41,12 @@ namespace WpfAppLab6Kanban
             }
         }
 
+        // Adjusts UI based on archived status and board rules
         private void ApplySecurityRules()
         {
             if (Task.IsArchived)
             {
-                // Archived tasks are READ-ONLY
+                // Archived tasks are read-only
                 TitleTextBox.IsReadOnly = true;
                 DescriptionTextBox.IsReadOnly = true;
                 PriorityComboBox.IsEnabled = false;
@@ -56,7 +56,7 @@ namespace WpfAppLab6Kanban
             }
             else
             {
-                // Active tasks: Visibility rules for Move buttons
+                // Show movement buttons only if they represent a valid next step
                 MoveTodoBtn.Visibility = (Task.Column == "In Progress") ? Visibility.Visible : Visibility.Collapsed;
                 MoveProgressBtn.Visibility = (Task.Column == "To Do" || Task.Column == "Done") ? Visibility.Visible : Visibility.Collapsed;
                 MoveDoneBtn.Visibility = (Task.Column == "In Progress") ? Visibility.Visible : Visibility.Collapsed;
@@ -67,7 +67,7 @@ namespace WpfAppLab6Kanban
         {
             if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
             {
-                MessageBox.Show("Title is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Title is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -103,10 +103,9 @@ namespace WpfAppLab6Kanban
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show($"Are you sure you want to PERMANENTLY delete '{Task.Title}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (result == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Permanently delete '{Task.Title}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                IsDeleted = true;
+                IsDeleted = true; // parent must handle actual DB deletion
                 DialogResult = true;
                 Close();
             }

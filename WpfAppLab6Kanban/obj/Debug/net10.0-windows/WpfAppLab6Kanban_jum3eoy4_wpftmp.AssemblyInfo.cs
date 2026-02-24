@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WpfAppLab6Kanban")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d38127e64dac3595d8d5264666b69370a5954a9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cf061549672ae2266b244d50ea107b049e1dea98")]
 [assembly: System.Reflection.AssemblyProductAttribute("WpfAppLab6Kanban")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WpfAppLab6Kanban")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

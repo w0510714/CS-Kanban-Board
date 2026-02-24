@@ -1,41 +1,24 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban.Data
 {
-    /// <summary>
-    /// Handles all SQLite database interactions for the Kanban board.
-    ///
-    /// Responsibilities:
-    ///   - Create the database file and tables on first launch
-    ///   - Provide full CRUD (Create, Read, Update, Delete) for KanbanTask
-    ///
-    /// The database file "kanban.db" is stored next to the running .exe so it
-    /// persists between app launches without any extra configuration.
-    /// </summary>
+    // Manages all SQLite database operations
     public class DatabaseService
     {
-        // ── Connection string ────────────────────────────────────────────────────
-        // AppContext.BaseDirectory → the folder that contains the built .exe
         private readonly string _connectionString;
 
         public DatabaseService()
         {
-            string dbPath = System.IO.Path.Combine(
-                AppContext.BaseDirectory, "kanban.db");
-
+            // Set database path to the execution directory
+            string dbPath = System.IO.Path.Combine(AppContext.BaseDirectory, "kanban.db");
             _connectionString = $"Data Source={dbPath}";
-
-            // Always make sure the database and tables exist before any query runs.
             InitializeDatabase();
         }
 
-        // ── Schema Bootstrap ─────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Creates the Tasks table if it does not already exist.
-        /// "IF NOT EXISTS" makes this safe to call on every startup.
-        /// </summary>
+        // Creates tables and applies necessary schema updates
         private void InitializeDatabase()
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -58,7 +41,7 @@ namespace WpfAppLab6Kanban.Data
             using var cmd = new SqliteCommand(createTableSql, connection);
             cmd.ExecuteNonQuery();
 
-            // Migration: Add IsArchived if it doesn't exist (handle existing DB from previous runs)
+            // Schema migrations for older databases
             try
             {
                 using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN IsArchived INTEGER NOT NULL DEFAULT 0;", connection);
@@ -74,12 +57,7 @@ namespace WpfAppLab6Kanban.Data
             catch { }
         }
 
-        // ── CREATE ───────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Inserts a new task into the database and sets its generated Id.
-        /// Returns the same task object so callers can chain if needed.
-        /// </summary>
+        // Persist a new task to the database
         public KanbanTask AddTask(KanbanTask task)
         {
             task.CreatedAt = DateTime.UtcNow;
@@ -95,27 +73,22 @@ namespace WpfAppLab6Kanban.Data
                 """;
 
             using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@Title",       task.Title);
+            cmd.Parameters.AddWithValue("@Title", task.Title);
             cmd.Parameters.AddWithValue("@Description", task.Description);
-            cmd.Parameters.AddWithValue("@Priority",    task.Priority);
-            cmd.Parameters.AddWithValue("@Column",      task.Column);
-            cmd.Parameters.AddWithValue("@Position",    task.Position);
-            cmd.Parameters.AddWithValue("@IsArchived",  task.IsArchived ? 1 : 0);
-            cmd.Parameters.AddWithValue("@CreatedAt",   task.CreatedAt.ToString("o")); // ISO-8601
-            cmd.Parameters.AddWithValue("@UpdatedAt",   task.UpdatedAt.ToString("o"));
+            cmd.Parameters.AddWithValue("@Priority", task.Priority);
+            cmd.Parameters.AddWithValue("@Column", task.Column);
+            cmd.Parameters.AddWithValue("@Position", task.Position);
+            cmd.Parameters.AddWithValue("@IsArchived", task.IsArchived ? 1 : 0);
+            cmd.Parameters.AddWithValue("@CreatedAt", task.CreatedAt.ToString("o"));
+            cmd.Parameters.AddWithValue("@UpdatedAt", task.UpdatedAt.ToString("o"));
 
-            // last_insert_rowid() returns the auto-generated primary key
             var result = cmd.ExecuteScalar();
             task.Id = Convert.ToInt32(result);
 
             return task;
         }
 
-        // ── READ ─────────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Returns every task in the database, ordered by Column then Position.
-        /// </summary>
+        // Load all non-archived tasks
         public List<KanbanTask> GetAllTasks()
         {
             var tasks = new List<KanbanTask>();
@@ -130,7 +103,7 @@ namespace WpfAppLab6Kanban.Data
                 ORDER  BY Column, Position;
                 """;
 
-            using var cmd    = new SqliteCommand(sql, connection);
+            using var cmd = new SqliteCommand(sql, connection);
             using var reader = cmd.ExecuteReader();
 
             while (reader.Read())
@@ -141,9 +114,7 @@ namespace WpfAppLab6Kanban.Data
             return tasks;
         }
 
-        /// <summary>
-        /// Returns all tasks that have been archived.
-        /// </summary>
+        // Load all archived tasks
         public List<KanbanTask> GetArchivedTasks()
         {
             var tasks = new List<KanbanTask>();
@@ -169,9 +140,7 @@ namespace WpfAppLab6Kanban.Data
             return tasks;
         }
 
-        /// <summary>
-        /// Returns all tasks that belong to a specific column.
-        /// </summary>
+        // Load active tasks for a specific column
         public List<KanbanTask> GetTasksByColumn(string column)
         {
             var tasks = new List<KanbanTask>();
@@ -198,12 +167,7 @@ namespace WpfAppLab6Kanban.Data
             return tasks;
         }
 
-        // ── UPDATE ───────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Saves changes to an existing task back to the database.
-        /// Always refreshes UpdatedAt to the current UTC time.
-        /// </summary>
+        // Update an existing task's data
         public void UpdateTask(KanbanTask task)
         {
             task.UpdatedAt = DateTime.UtcNow;
@@ -224,21 +188,19 @@ namespace WpfAppLab6Kanban.Data
                 """;
 
             using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@Title",       task.Title);
+            cmd.Parameters.AddWithValue("@Title", task.Title);
             cmd.Parameters.AddWithValue("@Description", task.Description);
-            cmd.Parameters.AddWithValue("@Priority",    task.Priority);
-            cmd.Parameters.AddWithValue("@Column",      task.Column);
-            cmd.Parameters.AddWithValue("@Position",    task.Position);
-            cmd.Parameters.AddWithValue("@IsArchived",  task.IsArchived ? 1 : 0);
-            cmd.Parameters.AddWithValue("@UpdatedAt",   task.UpdatedAt.ToString("o"));
-            cmd.Parameters.AddWithValue("@Id",          task.Id);
+            cmd.Parameters.AddWithValue("@Priority", task.Priority);
+            cmd.Parameters.AddWithValue("@Column", task.Column);
+            cmd.Parameters.AddWithValue("@Position", task.Position);
+            cmd.Parameters.AddWithValue("@IsArchived", task.IsArchived ? 1 : 0);
+            cmd.Parameters.AddWithValue("@UpdatedAt", task.UpdatedAt.ToString("o"));
+            cmd.Parameters.AddWithValue("@Id", task.Id);
 
             cmd.ExecuteNonQuery();
         }
 
-        /// <summary>
-        /// Archives every task that is currently on the active board.
-        /// </summary>
+        // Clear the board by archiving all active tasks
         public void ArchiveAllTasks()
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -250,9 +212,6 @@ namespace WpfAppLab6Kanban.Data
             cmd.ExecuteNonQuery();
         }
 
-        /// <summary>
-        /// Restores an archived task back to the main board.
-        /// </summary>
         public void RestoreTask(int taskId)
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -265,11 +224,6 @@ namespace WpfAppLab6Kanban.Data
             cmd.ExecuteNonQuery();
         }
 
-        // ── DELETE ───────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Permanently removes a task from the database by its Id.
-        /// </summary>
         public void DeleteTask(int taskId)
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -282,9 +236,7 @@ namespace WpfAppLab6Kanban.Data
             cmd.ExecuteNonQuery();
         }
 
-        /// <summary>
-        /// Permanently deletes all tasks that are currently archived.
-        /// </summary>
+        // Permanently delete everything in the archive
         public void DeleteAllArchived()
         {
             using var connection = new SqliteConnection(_connectionString);
@@ -296,25 +248,20 @@ namespace WpfAppLab6Kanban.Data
             cmd.ExecuteNonQuery();
         }
 
-        // ── Helper ───────────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Maps a single database row to a KanbanTask object.
-        /// Centralised here so every Read method uses identical mapping logic.
-        /// </summary>
+        // Helper to map a database row to a KanbanTask object
         private static KanbanTask MapRow(SqliteDataReader reader)
         {
             return new KanbanTask
             {
                 Id          = reader.GetInt32(0),
-                Title       = reader.GetString(1),
-                Description = reader.GetString(2),
-                Column      = reader.GetString(3),
-                Position    = reader.GetInt32(4),
-                IsArchived  = reader.GetInt32(5) == 1,
-                CreatedAt   = DateTime.Parse(reader.GetString(6)),
-                UpdatedAt   = DateTime.Parse(reader.GetString(7)),
-                Priority    = reader.GetString(8)
+                Title       = reader.IsDBNull(1) ? "Untitled" : reader.GetString(1),
+                Description = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                Column      = reader.IsDBNull(3) ? "To Do" : reader.GetString(3),
+                Position    = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
+                IsArchived  = reader.IsDBNull(5) ? false : reader.GetInt32(5) == 1,
+                CreatedAt   = reader.IsDBNull(6) ? DateTime.UtcNow : DateTime.Parse(reader.GetString(6)),
+                UpdatedAt   = reader.IsDBNull(7) ? DateTime.UtcNow : DateTime.Parse(reader.GetString(7)),
+                Priority    = reader.IsDBNull(8) ? "Medium" : reader.GetString(8)
             };
         }
     }

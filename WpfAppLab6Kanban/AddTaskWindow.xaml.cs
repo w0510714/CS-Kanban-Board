@@ -7,6 +7,7 @@ namespace WpfAppLab6Kanban
 {
     public partial class AddTaskWindow : Window
     {
+        // Data to be passed back to the main board
         public KanbanTask? NewTask { get; private set; }
 
         public AddTaskWindow()
@@ -19,7 +20,7 @@ namespace WpfAppLab6Kanban
         {
             if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
             {
-                MessageBox.Show("Please enter a task title.", "Required Field", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Title is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -28,7 +29,7 @@ namespace WpfAppLab6Kanban
                 Title = TitleTextBox.Text.Trim(),
                 Priority = (PriorityComboBox.SelectedItem as ComboBoxItem)?.Content.ToString() ?? "Medium",
                 Description = DescriptionTextBox.Text.Trim(),
-                Column = "To Do",
+                Column = "To Do", // All new tasks must start here
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };

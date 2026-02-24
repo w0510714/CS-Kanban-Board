@@ -20,8 +20,7 @@ namespace WpfAppLab6Kanban
         private void LoadArchivedTasks()
         {
             ArchivedTasks.Clear();
-            var tasks = _db.GetArchivedTasks();
-            foreach (var task in tasks)
+            foreach (var task in _db.GetArchivedTasks())
             {
                 ArchivedTasks.Add(task);
             }
@@ -31,14 +30,12 @@ namespace WpfAppLab6Kanban
         {
             if (ArchiveListView.SelectedItem is KanbanTask selectedTask)
             {
+                // Open archived tasks in read-only mode
                 var detailWindow = new TaskDetailWindow(selectedTask) { Owner = this };
-                if (detailWindow.ShowDialog() == true)
+                if (detailWindow.ShowDialog() == true && detailWindow.IsDeleted)
                 {
-                    if (detailWindow.IsDeleted)
-                    {
-                        _db.DeleteTask(selectedTask.Id);
-                        ArchivedTasks.Remove(selectedTask);
-                    }
+                    _db.DeleteTask(selectedTask.Id);
+                    ArchivedTasks.Remove(selectedTask);
                 }
             }
         }
@@ -47,34 +44,26 @@ namespace WpfAppLab6Kanban
         {
             if (ArchiveListView.SelectedItem is KanbanTask selectedTask)
             {
-                var result = MessageBox.Show($"Are you sure you want to PERMANENTLY delete '{selectedTask.Title}'? This cannot be undone.", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
+                if (MessageBox.Show($"Permanently delete '{selectedTask.Title}'?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     _db.DeleteTask(selectedTask.Id);
                     ArchivedTasks.Remove(selectedTask);
                 }
             }
-            else
-            {
-                MessageBox.Show("Please select a task to delete.", "Selection Required", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
         }
 
+        // Nuclear option: clear everything in the archive
         private void DeleteAll_Click(object sender, RoutedEventArgs e)
         {
             if (ArchivedTasks.Count == 0) return;
 
-            var result = MessageBox.Show("Are you sure you want to PERMANENTLY delete ALL archived tasks? This cannot be undone.", "Confirm Cleanup", MessageBoxButton.YesNo, MessageBoxImage.Error);
-            if (result == MessageBoxResult.Yes)
+            if (MessageBox.Show("Permanently delete ALL archived tasks?", "Final Confirm", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.Yes)
             {
                 _db.DeleteAllArchived();
                 ArchivedTasks.Clear();
             }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void Close_Click(object sender, RoutedEventArgs e) => Close();
     }
 }
