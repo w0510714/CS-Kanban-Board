@@ -1,5 +1,5 @@
 ﻿WpfAppLab6Kanban
-
+1.0.0.0
 
 winexe
 C#
@@ -12,7 +12,7 @@ TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_O
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\App.xaml
 6-1970394974
 
-11774019290
+13505043846
 210-1679891622
 AddTaskWindow.xaml;ArchiveWindow.xaml;HelpWindow.xaml;MainWindow.xaml;SettingsWindow.xaml;TaskDetailWindow.xaml;
 

@@ -1,0 +1,53 @@
+<Window x:Class="WpfAppLab6Kanban.HelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Product Help &amp; Documentation" Height="550" Width="500" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Border Padding="30" Background="{DynamicResource WindowBackgroundBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                <TextBlock Text="Kanban Mastery" FontSize="26" FontWeight="ExtraBold" Foreground="#1A73E8"/>
+                <TextBlock Text="User Guide &amp; Professional Tips" FontSize="14" Foreground="{DynamicResource SecondaryTextBrush}"/>
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="CORE INTERACTIONS" FontWeight="Bold" Foreground="#1A73E8" Margin="0,0,0,10"/>
+                    <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="15" Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock Text="• Task Intelligence" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Text="Double-click any task card to access the Detail Workspace. Here you can refine descriptions, adjust priorities, or safely retire tasks." TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,12"/>
+                            
+                            <TextBlock Text="• Agile Transitions" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Text="Utilize the directional arrows on each card to facilitate rapid movement across the 'To Do', 'In Progress', and 'Done' states." TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="WORKFLOW MANAGEMENT" FontWeight="Bold" Foreground="#1A73E8" Margin="0,0,0,10"/>
+                    <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="15" Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock Text="• Sprint Completion" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Text="Select 'End Sprint' from the main menu to archive all active tasks. This effectively resets your board for the next cycle while preserving history." TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,12"/>
+                            
+                            <TextBlock Text="• Archive Retrieval" FontWeight="Bold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,5"/>
+                            <TextBlock Text="Accidently moved a task? Open 'View Files' from the menu to see your complete archive history and permanently manage older entries." TextWrapping="Wrap" Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="TIPS &amp; TRICKS" FontWeight="Bold" Foreground="#1A73E8" Margin="0,0,0,10"/>
+                    <TextBlock Text="• Keyboard shortcut: Use 'Enter' in pop-ups to quickly save your changes." Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,5"/>
+                    <TextBlock Text="• Focus Mode: Enable Dark Mode in settings for a distraction-free high-contrast experience." Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,20"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Button Grid.Row="2" Content="Got it!" Click="Close_Click" Width="100" Height="35" HorizontalAlignment="Center" Background="#1A73E8" Foreground="White" FontWeight="Bold" BorderThickness="0">
+                <Button.Resources><Style TargetType="Border"><Setter Property="CornerRadius" Value="17"/></Style></Button.Resources>
+            </Button>
+        </Grid>
+    </Border>
+</Window>

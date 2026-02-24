@@ -24,37 +24,49 @@ namespace WpfAppLab6Kanban.Data
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
-            const string createTableSql = """
+            using var cmd = new SqliteCommand(@"
                 CREATE TABLE IF NOT EXISTS Tasks (
-                    Id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Title       TEXT    NOT NULL,
-                    Description TEXT    NOT NULL DEFAULT '',
-                    Priority    TEXT    NOT NULL DEFAULT 'Medium',
-                    Column      TEXT    NOT NULL DEFAULT 'To Do',
-                    Position    INTEGER NOT NULL DEFAULT 0,
-                    IsArchived  INTEGER NOT NULL DEFAULT 0,
-                    CreatedAt   TEXT    NOT NULL,
-                    UpdatedAt   TEXT    NOT NULL
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Title TEXT NOT NULL,
+                    Description TEXT,
+                    [Column] TEXT NOT NULL,
+                    Position INTEGER NOT NULL,
+                    IsArchived INTEGER NOT NULL DEFAULT 0,
+                    CreatedAt TEXT NOT NULL,
+                    UpdatedAt TEXT NOT NULL,
+                    Priority TEXT NOT NULL DEFAULT 'Medium'
                 );
-                """;
-
-            using var cmd = new SqliteCommand(createTableSql, connection);
+                CREATE TABLE IF NOT EXISTS Settings (
+                    Key TEXT PRIMARY KEY,
+                    Value TEXT NOT NULL
+                );", connection);
             cmd.ExecuteNonQuery();
 
             // Schema migrations for older databases
-            try
-            {
-                using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN IsArchived INTEGER NOT NULL DEFAULT 0;", connection);
-                migrateCmd.ExecuteNonQuery();
-            }
-            catch { }
+            try { using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN IsArchived INTEGER NOT NULL DEFAULT 0;", connection); migrateCmd.ExecuteNonQuery(); } catch { }
+            try { using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN Priority TEXT NOT NULL DEFAULT 'Medium';", connection); migrateCmd.ExecuteNonQuery(); } catch { }
+        }
 
-            try
-            {
-                using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN Priority TEXT NOT NULL DEFAULT 'Medium';", connection);
-                migrateCmd.ExecuteNonQuery();
-            }
-            catch { }
+        public string GetSetting(string key, string defaultValue)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            using var cmd = new SqliteCommand("SELECT Value FROM Settings WHERE Key = @key", connection);
+            cmd.Parameters.AddWithValue("@key", key);
+            var result = cmd.ExecuteScalar();
+            return result?.ToString() ?? defaultValue;
+        }
+
+        public void SaveSetting(string key, string value)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+            using var cmd = new SqliteCommand(@"
+                INSERT INTO Settings (Key, Value) VALUES (@key, @val)
+                ON CONFLICT(Key) DO UPDATE SET Value = @val", connection);
+            cmd.Parameters.AddWithValue("@key", key);
+            cmd.Parameters.AddWithValue("@val", value);
+            cmd.ExecuteNonQuery();
         }
 
         // Persist a new task to the database

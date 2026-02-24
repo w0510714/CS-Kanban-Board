@@ -1,26 +1,36 @@
 using System.Windows;
 using System.Windows.Media;
+using WpfAppLab6Kanban.Data;
 
 namespace WpfAppLab6Kanban
 {
     public partial class SettingsWindow : Window
     {
+        private readonly DatabaseService _db = new DatabaseService();
+
         public SettingsWindow()
         {
             InitializeComponent();
-            DarkModeToggle.IsChecked = IsDarkModeActive();
+            LoadExistingSettings();
         }
 
-        private bool IsDarkModeActive()
+        private void LoadExistingSettings()
         {
-            var brush = Application.Current.Resources["WindowBackgroundBrush"] as SolidColorBrush;
-            return brush?.Color == ((SolidColorBrush)new BrushConverter().ConvertFrom("#202124")).Color;
+            // Load persistent states from DB
+            bool isDark = _db.GetSetting("DarkMode", "0") == "1";
+            bool showBadges = _db.GetSetting("ShowBadges", "1") == "1";
+
+            DarkModeToggle.IsChecked = isDark;
+            BadgesToggle.IsChecked = showBadges;
         }
 
         private void DarkModeToggle_Click(object sender, RoutedEventArgs e)
         {
-            bool isDark = DarkModeToggle.IsChecked ?? false;
-            
+            ApplyTheme(DarkModeToggle.IsChecked ?? false);
+        }
+
+        public void ApplyTheme(bool isDark)
+        {
             if (isDark)
             {
                 Application.Current.Resources["WindowBackgroundBrush"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202124"));
@@ -39,6 +49,22 @@ namespace WpfAppLab6Kanban
             }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e) => Close();
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            // Persist to DB
+            _db.SaveSetting("DarkMode", (DarkModeToggle.IsChecked ?? false) ? "1" : "0");
+            _db.SaveSetting("ShowBadges", (BadgesToggle.IsChecked ?? false) ? "1" : "0");
+            
+            DialogResult = true;
+            Close();
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e) 
+        {
+            // Revert unsaved theme changes by reloading from DB in parent if needed, 
+            // but for simplicity here we just close.
+            DialogResult = false;
+            Close();
+        }
     }
 }

@@ -53,10 +53,12 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap"/>
-                        
-                        <Border Grid.Column="1" Padding="6,2" CornerRadius="4" Background="#1A73E8" VerticalAlignment="Top" Margin="10,0,0,0" Opacity="0.1">
+                        <!-- Priority Badge -->
+                        <Border Grid.Column="1" Padding="6,2" CornerRadius="4" Background="#1A73E8" VerticalAlignment="Top" Margin="10,0,0,0" Opacity="0.1"
+                                Visibility="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=BadgeVisibility}">
                         </Border>
-                        <TextBlock Grid.Column="1" Text="{Binding Priority}" FontSize="10" FontWeight="Bold" Foreground="#1A73E8" VerticalAlignment="Top" Margin="16,2,6,2"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Priority}" FontSize="10" FontWeight="Bold" Foreground="#1A73E8" VerticalAlignment="Top" Margin="16,2,6,2"
+                                   Visibility="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=BadgeVisibility}"/>
                     </Grid>
                     
                     <TextBlock Text="{Binding Description}" FontSize="13" Foreground="{DynamicResource SecondaryTextBrush}" MaxHeight="60" TextTrimming="CharacterEllipsis" Margin="0,0,0,12"/>
@@ -125,6 +127,11 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <Separator/>
+                                <MenuItem Header="Help &amp; Documentation" Click="Help_Click">
+                                    <MenuItem.Icon>
+                                        <TextBlock Text="❓" VerticalAlignment="Center"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem Header="Settings" Click="Settings_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="⚙️" VerticalAlignment="Center"/>

@@ -1,4 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -7,11 +10,19 @@ using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private DatabaseService _db;
+        private Visibility _badgeVisibility = Visibility.Visible;
 
-        // Tasks collections bound to the board's three columns
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public Visibility BadgeVisibility
+        {
+            get => _badgeVisibility;
+            set { _badgeVisibility = value; OnPropertyChanged(); }
+        }
+
         public ObservableCollection<KanbanTask> TodoTasks { get; set; } = new ObservableCollection<KanbanTask>();
         public ObservableCollection<KanbanTask> InProgressTasks { get; set; } = new ObservableCollection<KanbanTask>();
         public ObservableCollection<KanbanTask> DoneTasks { get; set; } = new ObservableCollection<KanbanTask>();
@@ -20,11 +31,38 @@ namespace WpfAppLab6Kanban
         {
             InitializeComponent();
             _db = new DatabaseService();
+            ApplyStartupSettings();
             this.DataContext = this;
             LoadTasks();
         }
 
-        // Fetches non-archived tasks from DB and populates UI collections
+        private void ApplyStartupSettings()
+        {
+            bool isDark = _db.GetSetting("DarkMode", "0") == "1";
+            new SettingsWindow().ApplyTheme(isDark);
+
+            bool showBadges = _db.GetSetting("ShowBadges", "1") == "1";
+            BadgeVisibility = showBadges ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void HamburgerButton_Click(object sender, RoutedEventArgs e)
+        {
+            HamburgerButton.ContextMenu.IsOpen = true;
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            if (new SettingsWindow { Owner = this }.ShowDialog() == true)
+            {
+                ApplyStartupSettings();
+            }
+        }
+
+        private void Help_Click(object sender, RoutedEventArgs e)
+        {
+            new HelpWindow { Owner = this }.ShowDialog();
+        }
+
         private void LoadTasks()
         {
             TodoTasks.Clear();
@@ -65,23 +103,17 @@ namespace WpfAppLab6Kanban
                 {
                     if (detailWindow.IsDeleted)
                     {
-                        // Hard delete from DB and UI
                         _db.DeleteTask(selectedTask.Id);
                         GetCollection(originalColumn).Remove(selectedTask);
                     }
                     else
                     {
-                        // Update changes in DB
                         _db.UpdateTask(selectedTask);
-
-                        // If column changed (moved), swap UI collections
                         if (selectedTask.Column != originalColumn)
                         {
                             GetCollection(originalColumn).Remove(selectedTask);
                             GetCollection(selectedTask.Column).Add(selectedTask);
                         }
-                        
-                        // Handle potential archive from detail window
                         if (selectedTask.IsArchived)
                         {
                             GetCollection(selectedTask.Column).Remove(selectedTask);
@@ -90,16 +122,6 @@ namespace WpfAppLab6Kanban
                     UpdateArchiveButtonState();
                 }
             }
-        }
-
-        private void HamburgerButton_Click(object sender, RoutedEventArgs e)
-        {
-            HamburgerButton.ContextMenu.IsOpen = true;
-        }
-
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            new SettingsWindow { Owner = this }.ShowDialog();
         }
 
         private void ViewArchives_Click(object sender, RoutedEventArgs e)
@@ -111,7 +133,6 @@ namespace WpfAppLab6Kanban
         private void ArchiveAll_Click(object sender, RoutedEventArgs e)
         {
             if (TodoTasks.Count == 0 && InProgressTasks.Count == 0 && DoneTasks.Count == 0) return;
-
             if (MessageBox.Show("Archive all tasks and clear the board?", "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 _db.ArchiveAllTasks();
@@ -136,7 +157,6 @@ namespace WpfAppLab6Kanban
                     "Done" => "In Progress",
                     _ => oldColumn
                 };
-
                 if (newColumn != oldColumn)
                 {
                     task.Column = newColumn;
@@ -157,7 +177,6 @@ namespace WpfAppLab6Kanban
                     "In Progress" => "Done",
                     _ => oldColumn
                 };
-
                 if (newColumn != oldColumn)
                 {
                     task.Column = newColumn;
@@ -173,13 +192,12 @@ namespace WpfAppLab6Kanban
             GetCollection(to).Add(task);
         }
 
-        // Helper to find the correct collection based on column name
         private ObservableCollection<KanbanTask> GetCollection(string columnName) => columnName switch
         {
             "To Do" => TodoTasks,
             "In Progress" => InProgressTasks,
             "Done" => DoneTasks,
-            _ => throw new System.ArgumentException("Invalid column name")
+            _ => throw new ArgumentException("Invalid column name")
         };
 
         private void DeleteTask_Click(object sender, RoutedEventArgs e)
@@ -193,6 +211,11 @@ namespace WpfAppLab6Kanban
                     UpdateArchiveButtonState();
                 }
             }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }
