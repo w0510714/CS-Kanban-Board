@@ -51,7 +51,7 @@ namespace WpfAppLab6Kanban {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/WpfAppLab6Kanban;component/helpwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/WpfAppLab6Kanban;V1.0.0.0;component/helpwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\HelpWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

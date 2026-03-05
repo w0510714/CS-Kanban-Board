@@ -9,6 +9,30 @@
     {
       "AbsoluteMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|c:\\users\\seanj\\onedrive\\desktop\\programming in c#\\lab 6\\wpfapplab6kanban\\wpfapplab6kanban\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|solutionrelative:wpfapplab6kanban\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|c:\\users\\seanj\\onedrive\\desktop\\programming in c#\\lab 6\\wpfapplab6kanban\\wpfapplab6kanban\\taskdetailwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|solutionrelative:wpfapplab6kanban\\taskdetailwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|c:\\users\\seanj\\onedrive\\desktop\\programming in c#\\lab 6\\wpfapplab6kanban\\wpfapplab6kanban\\models\\kanbantask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|solutionrelative:wpfapplab6kanban\\models\\kanbantask.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|c:\\users\\seanj\\onedrive\\desktop\\programming in c#\\lab 6\\wpfapplab6kanban\\wpfapplab6kanban\\settingswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|solutionrelative:wpfapplab6kanban\\settingswindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|c:\\users\\seanj\\onedrive\\desktop\\programming in c#\\lab 6\\wpfapplab6kanban\\wpfapplab6kanban\\data\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|solutionrelative:wpfapplab6kanban\\data\\databaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|c:\\users\\seanj\\onedrive\\desktop\\programming in c#\\lab 6\\wpfapplab6kanban\\wpfapplab6kanban\\archivewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|solutionrelative:wpfapplab6kanban\\archivewindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|c:\\users\\seanj\\onedrive\\desktop\\programming in c#\\lab 6\\wpfapplab6kanban\\wpfapplab6kanban\\addtaskwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{02C76EF4-FCEC-607D-D3CD-BC76F4E43B99}|WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj|solutionrelative:wpfapplab6kanban\\addtaskwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 14,
           "Children": [
             {
               "$type": "Bookmark",
@@ -37,6 +61,18 @@
               "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "MainWindow.xaml.cs",
@@ -44,9 +80,88 @@
               "RelativeDocumentMoniker": "WpfAppLab6Kanban\\MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\MainWindow.xaml.cs",
               "RelativeToolTip": "WpfAppLab6Kanban\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAKQAAAAAAAAAAAAAALoAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-24T18:36:40.304Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DatabaseService.cs",
+              "DocumentMoniker": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\Data\\DatabaseService.cs",
+              "RelativeDocumentMoniker": "WpfAppLab6Kanban\\Data\\DatabaseService.cs",
+              "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\Data\\DatabaseService.cs",
+              "RelativeToolTip": "WpfAppLab6Kanban\\Data\\DatabaseService.cs",
+              "ViewState": "AgIAAMQAAAAAAAAAAAAYwEQAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-27T12:42:36.337Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "KanbanTask.cs",
+              "DocumentMoniker": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\Models\\KanbanTask.cs",
+              "RelativeDocumentMoniker": "WpfAppLab6Kanban\\Models\\KanbanTask.cs",
+              "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\Models\\KanbanTask.cs",
+              "RelativeToolTip": "WpfAppLab6Kanban\\Models\\KanbanTask.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAAIwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-02T17:21:07.566Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TaskDetailWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\TaskDetailWindow.xaml.cs",
+              "RelativeDocumentMoniker": "WpfAppLab6Kanban\\TaskDetailWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\TaskDetailWindow.xaml.cs",
+              "RelativeToolTip": "WpfAppLab6Kanban\\TaskDetailWindow.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-24T18:36:40.304Z"
+              "WhenOpened": "2026-03-02T17:23:21.636Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ArchiveWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\ArchiveWindow.xaml.cs",
+              "RelativeDocumentMoniker": "WpfAppLab6Kanban\\ArchiveWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\ArchiveWindow.xaml.cs",
+              "RelativeToolTip": "WpfAppLab6Kanban\\ArchiveWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-02T17:24:07.184Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "SettingsWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\SettingsWindow.xaml.cs",
+              "RelativeDocumentMoniker": "WpfAppLab6Kanban\\SettingsWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\SettingsWindow.xaml.cs",
+              "RelativeToolTip": "WpfAppLab6Kanban\\SettingsWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADoAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-02T17:23:24.297Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AddTaskWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\AddTaskWindow.xaml.cs",
+              "RelativeDocumentMoniker": "WpfAppLab6Kanban\\AddTaskWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\AddTaskWindow.xaml.cs",
+              "RelativeToolTip": "WpfAppLab6Kanban\\AddTaskWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-02T17:25:26.771Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -57,7 +172,7 @@
               "ToolTip": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\MainWindow.xaml",
               "RelativeToolTip": "WpfAppLab6Kanban\\MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-02-24T18:36:43.523Z",
+              "WhenOpened": "2026-03-02T17:50:02.549Z",
               "EditorCaption": ""
             }
           ]
