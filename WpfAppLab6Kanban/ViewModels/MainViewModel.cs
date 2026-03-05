@@ -8,6 +8,7 @@ using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban.ViewModels
 {
+<<<<<<< HEAD
     // ======================================================================
     //  MainViewModel — MVVM Toolkit edition
     // ======================================================================
@@ -110,6 +111,87 @@ namespace WpfAppLab6Kanban.ViewModels
         private void MoveLeft(KanbanTask task)
         {
             if (task is null) return;
+=======
+    // The ViewModel owns all state and commands for the main board.
+    // [ObservableProperty] generates backing fields + INotifyPropertyChanged.
+    // [RelayCommand] generates ICommand implementations — no boilerplate required.
+    public partial class MainViewModel : ObservableObject
+    {
+        private readonly DatabaseService _db;
+
+        // --- Observable Collections (the three Kanban columns) ---
+        public ObservableCollection<KanbanTask> TodoTasks { get; } = new();
+        public ObservableCollection<KanbanTask> InProgressTasks { get; } = new();
+        public ObservableCollection<KanbanTask> DoneTasks { get; } = new();
+
+        // Controls priority badge visibility; toggled from settings
+        [ObservableProperty]
+        private Visibility _badgeVisibility = Visibility.Visible;
+
+        // Drives the "Archive All / End Sprint" menu item enabled state
+        [ObservableProperty]
+        private bool _hasTasks;
+
+        public MainViewModel(DatabaseService db)
+        {
+            _db = db;
+            LoadTasks();
+        }
+
+        // -------------------------------------------------------
+        //  Commands — each [RelayCommand] method becomes a
+        //  public IRelayCommand property automatically.
+        // -------------------------------------------------------
+
+        /// <summary>Opens the Add-Task dialog and persists the result.</summary>
+        [RelayCommand]
+        private void AddTask()
+        {
+            var win = new AddTaskWindow { Owner = Application.Current.MainWindow };
+            if (win.ShowDialog() == true && win.NewTask != null)
+            {
+                _db.AddTask(win.NewTask);
+                TodoTasks.Add(win.NewTask);
+                RefreshHasTasks();
+            }
+        }
+
+        /// <summary>Opens the detail/edit dialog for the selected task.</summary>
+        [RelayCommand]
+        private void OpenTask(KanbanTask task)
+        {
+            if (task == null) return;
+            string originalColumn = task.Column;
+            var win = new TaskDetailWindow(task) { Owner = Application.Current.MainWindow };
+
+            if (win.ShowDialog() == true)
+            {
+                if (win.IsDeleted)
+                {
+                    _db.DeleteTask(task.Id);
+                    GetCollection(originalColumn).Remove(task);
+                }
+                else
+                {
+                    _db.UpdateTask(task);
+                    if (task.Column != originalColumn)
+                    {
+                        GetCollection(originalColumn).Remove(task);
+                        GetCollection(task.Column).Add(task);
+                    }
+                    if (task.IsArchived)
+                        GetCollection(task.Column).Remove(task);
+                }
+                RefreshHasTasks();
+            }
+        }
+
+        /// <summary>Moves a task one column to the left.</summary>
+        [RelayCommand]
+        private void MoveLeft(KanbanTask task)
+        {
+            if (task == null) return;
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             string newColumn = task.Column switch
             {
                 "In Progress" => "To Do",
@@ -119,11 +201,19 @@ namespace WpfAppLab6Kanban.ViewModels
             MoveTask(task, newColumn);
         }
 
+<<<<<<< HEAD
         /// <summary>Moves a card one column to the right.</summary>
         [RelayCommand]
         private void MoveRight(KanbanTask task)
         {
             if (task is null) return;
+=======
+        /// <summary>Moves a task one column to the right.</summary>
+        [RelayCommand]
+        private void MoveRight(KanbanTask task)
+        {
+            if (task == null) return;
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             string newColumn = task.Column switch
             {
                 "To Do"       => "In Progress",
@@ -133,12 +223,21 @@ namespace WpfAppLab6Kanban.ViewModels
             MoveTask(task, newColumn);
         }
 
+<<<<<<< HEAD
         /// <summary>Permanently deletes a task after a confirmation prompt.</summary>
         [RelayCommand]
         private void DeleteTask(KanbanTask task)
         {
             if (task is null) return;
             if (MessageBox.Show($"Permanently delete '{task.Title}'?", "Confirm Delete",
+=======
+        /// <summary>Permanently deletes a task after confirmation.</summary>
+        [RelayCommand]
+        private void DeleteTask(KanbanTask task)
+        {
+            if (task == null) return;
+            if (MessageBox.Show($"Permanently delete '{task.Title}'?", "Confirm",
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
                 _db.DeleteTask(task.Id);
@@ -147,6 +246,7 @@ namespace WpfAppLab6Kanban.ViewModels
             }
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// Archives every active task (ends the sprint).
         /// CanExecute = HasTasks — when HasTasks is false the button is
@@ -157,12 +257,21 @@ namespace WpfAppLab6Kanban.ViewModels
         {
             if (MessageBox.Show("Archive all tasks and clear the board?", "End Sprint",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+=======
+        /// <summary>Archives every active task (ends the sprint).</summary>
+        [RelayCommand(CanExecute = nameof(HasTasks))]
+        private void ArchiveAll()
+        {
+            if (MessageBox.Show("Archive all tasks and clear the board?", "Confirm",
+                    MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             {
                 _db.ArchiveAllTasks();
                 LoadTasks();
             }
         }
 
+<<<<<<< HEAD
         /// <summary>Raises an event so the View can open the Archives dialog.</summary>
         [RelayCommand]
         private void ViewArchives() => RequestViewArchives?.Invoke();
@@ -221,6 +330,36 @@ namespace WpfAppLab6Kanban.ViewModels
         }
 
         /// <summary>Reloads all active tasks from the database.</summary>
+=======
+        /// <summary>Opens the archive viewer; reloads active tasks on return.</summary>
+        [RelayCommand]
+        private void ViewArchives()
+        {
+            new ArchiveWindow { Owner = Application.Current.MainWindow }.ShowDialog();
+            LoadTasks();
+        }
+
+        /// <summary>Opens the settings dialog and reapplies any changed settings.</summary>
+        [RelayCommand]
+        private void OpenSettings()
+        {
+            if (new SettingsWindow { Owner = Application.Current.MainWindow }.ShowDialog() == true)
+                ApplyStartupSettings();
+        }
+
+        /// <summary>Opens the Help window.</summary>
+        [RelayCommand]
+        private void OpenHelp()
+        {
+            new HelpWindow { Owner = Application.Current.MainWindow }.ShowDialog();
+        }
+
+        // -------------------------------------------------------
+        //  Private helpers
+        // -------------------------------------------------------
+
+        /// <summary>Loads (or reloads) all active tasks from the database.</summary>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         public void LoadTasks()
         {
             TodoTasks.Clear();
@@ -239,7 +378,11 @@ namespace WpfAppLab6Kanban.ViewModels
             RefreshHasTasks();
         }
 
+<<<<<<< HEAD
         /// <summary>Reads persisted settings and applies them to the app.</summary>
+=======
+        /// <summary>Reads persisted settings and applies them to the application.</summary>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         public void ApplyStartupSettings()
         {
             bool isDark     = _db.GetSetting("DarkMode",   "0") == "1";
@@ -249,10 +392,13 @@ namespace WpfAppLab6Kanban.ViewModels
             BadgeVisibility = showBadges ? Visibility.Visible : Visibility.Collapsed;
         }
 
+<<<<<<< HEAD
         // ──────────────────────────────────────────────────────────────────
         //  Private helpers
         // ──────────────────────────────────────────────────────────────────
 
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         private void MoveTask(KanbanTask task, string newColumn)
         {
             if (newColumn == task.Column) return;
@@ -263,6 +409,7 @@ namespace WpfAppLab6Kanban.ViewModels
             GetCollection(newColumn).Add(task);
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// Updates HasTasks and tells the toolkit to re-evaluate
         /// ArchiveAllCommand.CanExecute — this is how the "End Sprint"
@@ -271,6 +418,12 @@ namespace WpfAppLab6Kanban.ViewModels
         private void RefreshHasTasks()
         {
             HasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
+=======
+        private void RefreshHasTasks()
+        {
+            HasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
+            // Re-evaluate the CanExecute of ArchiveAllCommand
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             ArchiveAllCommand.NotifyCanExecuteChanged();
         }
 
@@ -279,7 +432,11 @@ namespace WpfAppLab6Kanban.ViewModels
             "To Do"       => TodoTasks,
             "In Progress" => InProgressTasks,
             "Done"        => DoneTasks,
+<<<<<<< HEAD
             _             => throw new ArgumentException($"Invalid column '{column}'", nameof(column))
+=======
+            _             => throw new ArgumentException("Invalid column name", nameof(column))
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         };
     }
 }

@@ -9,6 +9,7 @@
         Background="{DynamicResource WindowBackgroundBrush}"
         FontFamily="Segoe UI, Arial">
 
+<<<<<<< HEAD
     <Window.Resources>
         <!--
             Task Card DataTemplate
@@ -20,6 +21,9 @@
                        AccentBrush      → priority badge colour
                        CardBackgroundBrush, TextBrush, SecondaryTextBrush → tokens
         -->
+=======
+        <!-- Task Card DataTemplate — buttons now use Commands bound to the ViewModel -->
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         <DataTemplate x:Key="TaskTemplate">
             <Border BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
@@ -37,6 +41,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+<<<<<<< HEAD
                         <TextBlock Text="{Binding Title}"
                                    FontWeight="SemiBold" FontSize="15"
                                    Foreground="{DynamicResource TextBrush}"
@@ -56,6 +61,14 @@
                                    VerticalAlignment="Top" Margin="16,2,6,2"
                                    Visibility="{Binding DataContext.BadgeVisibility,
                                                 RelativeSource={RelativeSource AncestorType=Window}}"/>
+=======
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap"/>
+                        <!-- Priority Badge — visibility bound to ViewModel -->
+                        <Border Grid.Column="1" Padding="6,2" CornerRadius="4" Background="#1A73E8" VerticalAlignment="Top" Margin="10,0,0,0" Opacity="0.1"
+                                Visibility="{Binding DataContext.BadgeVisibility, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Priority}" FontSize="10" FontWeight="Bold" Foreground="#1A73E8" VerticalAlignment="Top" Margin="16,2,6,2"
+                                   Visibility="{Binding DataContext.BadgeVisibility, RelativeSource={RelativeSource AncestorType=Window}}"/>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                     </Grid>
 
                     <TextBlock Text="{Binding Description}"
@@ -72,6 +85,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+<<<<<<< HEAD
 
                         <!-- Move arrows — use shared CardArrowButton style from App.xaml -->
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
@@ -97,6 +111,28 @@
                                 Command="{Binding DataContext.DeleteTaskCommand,
                                           RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"/>
+=======
+                        
+                        <!-- Move buttons: Command bound to ViewModel, task passed as CommandParameter -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="0">
+                            <Button Content="←"
+                                    Command="{Binding DataContext.MoveLeftCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"
+                                    Width="30" Height="25" Margin="0,0,5,0"
+                                    Background="Transparent" Foreground="{DynamicResource SecondaryTextBrush}" BorderThickness="0"/>
+                            <Button Content="→"
+                                    Command="{Binding DataContext.MoveRightCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"
+                                    Width="30" Height="25"
+                                    Background="Transparent" Foreground="{DynamicResource SecondaryTextBrush}" BorderThickness="0"/>
+                        </StackPanel>
+                        
+                        <!-- Delete button: Command bound to ViewModel -->
+                        <Button Grid.Column="1" Content="Delete"
+                                Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Background="Transparent" Foreground="#D32F2F" FontSize="11" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                     </Grid>
                 </StackPanel>
             </Border>
@@ -191,6 +227,7 @@
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+<<<<<<< HEAD
                     <!--
                         ModernPillButton is now defined in App.xaml (Topic 4).
                         Previously it was duplicated inside MainWindow.xaml.Resources.
@@ -206,6 +243,18 @@
                             Cursor="Hand" Click="HamburgerButton_Click">
                         <Button.ContextMenu>
                             <ContextMenu>
+=======
+                    <!-- "+ New Task" button now binds to AddTaskCommand -->
+                    <Button Content="+ New Task" Style="{StaticResource ModernPillButton}"
+                            Command="{Binding AddTaskCommand}" Margin="0,0,15,0"/>
+                    
+                    <!-- Hamburger Menu Button — click handled in code-behind (opens ContextMenu) -->
+                    <Button x:Name="HamburgerButton" Width="40" Height="40" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" Click="HamburgerButton_Click">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <!-- Menu items now use Command bindings -->
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                                 <MenuItem Header="View Archives"
                                           Command="{Binding ViewArchivesCommand}">
                                     <MenuItem.Icon>
@@ -233,10 +282,15 @@
                                 </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
+<<<<<<< HEAD
                         <TextBlock Text="≡" FontSize="24" FontWeight="Bold"
                                    Foreground="{DynamicResource TextBrush}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" Margin="0,-4,0,0"/>
+=======
+                        <TextBlock Text="≡" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-4,0,0"/>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                     </Button>
                 </StackPanel>
             </DockPanel>
@@ -266,6 +320,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+<<<<<<< HEAD
             <controls:KanbanColumnControl
                 Grid.Column="0"
                 ColumnTitle="TO DO"
@@ -289,6 +344,46 @@
                 ColumnBackground="#124CAF50"
                 TasksSource="{Binding DoneTasks}"
                 ItemDoubleClickCommand="{Binding EditTaskCommand}"/>
+=======
+            <!-- TODO Column -->
+            <Border Grid.Column="0" Margin="8" BorderBrush="#2196F3" BorderThickness="2.5" Background="#122196F3" CornerRadius="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="TO DO" FontWeight="Black" FontSize="13" Foreground="#2196F3" HorizontalAlignment="Center" Margin="0,15,0,10"/>
+                    <ListBox Grid.Row="1" x:Name="TodoListBox" ItemsSource="{Binding TodoTasks}"
+                             MouseDoubleClick="ListBox_MouseDoubleClick"/>
+                </Grid>
+            </Border>
+
+            <!-- IN PROGRESS Column -->
+            <Border Grid.Column="1" Margin="8" BorderBrush="#FF9800" BorderThickness="2.5" Background="#12FF9800" CornerRadius="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="IN PROGRESS" FontWeight="Black" FontSize="13" Foreground="#FF9800" HorizontalAlignment="Center" Margin="0,15,0,10"/>
+                    <ListBox Grid.Row="1" x:Name="InProgressListBox" ItemsSource="{Binding InProgressTasks}"
+                             MouseDoubleClick="ListBox_MouseDoubleClick"/>
+                </Grid>
+            </Border>
+
+            <!-- DONE Column -->
+            <Border Grid.Column="2" Margin="8" BorderBrush="#4CAF50" BorderThickness="2.5" Background="#124CAF50" CornerRadius="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="DONE" FontWeight="Black" FontSize="13" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,15,0,10"/>
+                    <ListBox Grid.Row="1" x:Name="DoneListBox" ItemsSource="{Binding DoneTasks}"
+                             MouseDoubleClick="ListBox_MouseDoubleClick"/>
+                </Grid>
+            </Border>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         </Grid>
     </Grid>
 </Window>
