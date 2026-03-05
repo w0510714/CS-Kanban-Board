@@ -57,6 +57,7 @@ C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppL
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\HelpWindow.g.cs
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\bin\Debug\net10.0-windows\CommunityToolkit.Mvvm.dll
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
@@ -81,6 +82,10 @@ C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppL
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\Controls\SettingsToggleRow.g.cs
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\GeneratedInternalTypeHelper.g.cs
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\WpfAppLab6Kanban_MarkupCompile.lref
+=======
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\bin\Debug\net10.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\WpfAppLab6Kanban.sourcelink.json
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\bin\Debug\net10.0-windows\CommunityToolkit.Mvvm.dll
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\WpfAppLab6Kanban.sourcelink.json

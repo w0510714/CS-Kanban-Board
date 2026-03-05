@@ -10,6 +10,7 @@
         FontFamily="Segoe UI, Arial">
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Window.Resources>
         <!--
             Task Card DataTemplate
@@ -21,6 +22,9 @@
                        AccentBrush      → priority badge colour
                        CardBackgroundBrush, TextBrush, SecondaryTextBrush → tokens
         -->
+=======
+        <!-- Task Card DataTemplate — buttons now use Commands bound to the ViewModel -->
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
         <!-- Task Card DataTemplate — buttons now use Commands bound to the ViewModel -->
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
@@ -68,6 +72,9 @@
                                 Visibility="{Binding DataContext.BadgeVisibility, RelativeSource={RelativeSource AncestorType=Window}}"/>
                         <TextBlock Grid.Column="1" Text="{Binding Priority}" FontSize="10" FontWeight="Bold" Foreground="#1A73E8" VerticalAlignment="Top" Margin="16,2,6,2"
                                    Visibility="{Binding DataContext.BadgeVisibility, RelativeSource={RelativeSource AncestorType=Window}}"/>
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                     </Grid>
 
@@ -85,6 +92,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+<<<<<<< HEAD
 <<<<<<< HEAD
 
                         <!-- Move arrows — use shared CardArrowButton style from App.xaml -->
@@ -116,6 +124,12 @@
                         <!-- Move buttons: Command bound to ViewModel, task passed as CommandParameter -->
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
                             <Button Content="←"
+=======
+                        
+                        <!-- Move buttons: Command bound to ViewModel, task passed as CommandParameter -->
+                        <StackPanel Orientation="Horizontal" Grid.Column="0">
+                            <Button Content="←"
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                                     Command="{Binding DataContext.MoveLeftCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"
                                     Width="30" Height="25" Margin="0,0,5,0"
@@ -132,6 +146,9 @@
                                 Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Background="Transparent" Foreground="#D32F2F" FontSize="11" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                     </Grid>
                 </StackPanel>
@@ -228,6 +245,7 @@
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
 <<<<<<< HEAD
+<<<<<<< HEAD
                     <!--
                         ModernPillButton is now defined in App.xaml (Topic 4).
                         Previously it was duplicated inside MainWindow.xaml.Resources.
@@ -243,6 +261,18 @@
                             Cursor="Hand" Click="HamburgerButton_Click">
                         <Button.ContextMenu>
                             <ContextMenu>
+=======
+                    <!-- "+ New Task" button now binds to AddTaskCommand -->
+                    <Button Content="+ New Task" Style="{StaticResource ModernPillButton}"
+                            Command="{Binding AddTaskCommand}" Margin="0,0,15,0"/>
+                    
+                    <!-- Hamburger Menu Button — click handled in code-behind (opens ContextMenu) -->
+                    <Button x:Name="HamburgerButton" Width="40" Height="40" Background="Transparent"
+                            BorderThickness="0" Cursor="Hand" Click="HamburgerButton_Click">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <!-- Menu items now use Command bindings -->
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
                     <!-- "+ New Task" button now binds to AddTaskCommand -->
                     <Button Content="+ New Task" Style="{StaticResource ModernPillButton}"
@@ -283,10 +313,15 @@
                             </ContextMenu>
                         </Button.ContextMenu>
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <TextBlock Text="≡" FontSize="24" FontWeight="Bold"
                                    Foreground="{DynamicResource TextBrush}"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center" Margin="0,-4,0,0"/>
+=======
+                        <TextBlock Text="≡" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-4,0,0"/>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
                         <TextBlock Text="≡" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-4,0,0"/>

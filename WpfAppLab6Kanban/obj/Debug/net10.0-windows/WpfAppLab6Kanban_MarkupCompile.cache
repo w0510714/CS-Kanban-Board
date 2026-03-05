@@ -13,10 +13,13 @@ C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppL
 81983172649
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 17-570129441
 2251369116627
 AddTaskWindow.xaml;ArchiveWindow.xaml;Controls\KanbanColumnControl.xaml;Controls\SettingsToggleRow.xaml;HelpWindow.xaml;MainWindow.xaml;SettingsWindow.xaml;TaskDetailWindow.xaml;
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 12977462983
 2111925185146
 AddTaskWindow.xaml;ArchiveWindow.xaml;HelpWindow.xaml;MainWindow.xaml;SettingsWindow.xaml;TaskDetailWindow.xaml;

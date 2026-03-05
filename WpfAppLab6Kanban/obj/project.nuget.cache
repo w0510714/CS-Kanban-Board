@@ -1,7 +1,11 @@
 {
   "version": 2,
 <<<<<<< HEAD
+<<<<<<< HEAD
   "dgSpecHash": "NcIua2wGw4I=",
+=======
+  "dgSpecHash": "8+oJgIjo7G8=",
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
   "dgSpecHash": "8+oJgIjo7G8=",
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
@@ -10,7 +14,10 @@
   "expectedPackageFiles": [
     "C:\\Users\\seanj\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
     "C:\\Users\\seanj\\.nuget\\packages\\microsoft.data.sqlite\\9.0.2\\microsoft.data.sqlite.9.0.2.nupkg.sha512",
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
     "C:\\Users\\seanj\\.nuget\\packages\\microsoft.data.sqlite.core\\9.0.2\\microsoft.data.sqlite.core.9.0.2.nupkg.sha512",

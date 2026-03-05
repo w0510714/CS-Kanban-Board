@@ -52,8 +52,11 @@
               "version": "[8.4.0, )"
             },
 <<<<<<< HEAD
+<<<<<<< HEAD
             "Microsoft.EntityFrameworkCore.Sqlite": {
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             "Microsoft.Data.Sqlite": {
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
               "target": "Package",

@@ -9,6 +9,7 @@ using WpfAppLab6Kanban.Models;
 namespace WpfAppLab6Kanban.ViewModels
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     // ======================================================================
     //  MainViewModel — MVVM Toolkit edition
     // ======================================================================
@@ -112,6 +113,8 @@ namespace WpfAppLab6Kanban.ViewModels
         {
             if (task is null) return;
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
     // The ViewModel owns all state and commands for the main board.
     // [ObservableProperty] generates backing fields + INotifyPropertyChanged.
     // [RelayCommand] generates ICommand implementations — no boilerplate required.
@@ -191,6 +194,9 @@ namespace WpfAppLab6Kanban.ViewModels
         private void MoveLeft(KanbanTask task)
         {
             if (task == null) return;
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             string newColumn = task.Column switch
             {
@@ -202,17 +208,23 @@ namespace WpfAppLab6Kanban.ViewModels
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         /// <summary>Moves a card one column to the right.</summary>
         [RelayCommand]
         private void MoveRight(KanbanTask task)
         {
             if (task is null) return;
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         /// <summary>Moves a task one column to the right.</summary>
         [RelayCommand]
         private void MoveRight(KanbanTask task)
         {
             if (task == null) return;
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             string newColumn = task.Column switch
             {
@@ -224,6 +236,7 @@ namespace WpfAppLab6Kanban.ViewModels
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         /// <summary>Permanently deletes a task after a confirmation prompt.</summary>
         [RelayCommand]
         private void DeleteTask(KanbanTask task)
@@ -231,12 +244,17 @@ namespace WpfAppLab6Kanban.ViewModels
             if (task is null) return;
             if (MessageBox.Show($"Permanently delete '{task.Title}'?", "Confirm Delete",
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         /// <summary>Permanently deletes a task after confirmation.</summary>
         [RelayCommand]
         private void DeleteTask(KanbanTask task)
         {
             if (task == null) return;
             if (MessageBox.Show($"Permanently delete '{task.Title}'?", "Confirm",
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
@@ -246,6 +264,7 @@ namespace WpfAppLab6Kanban.ViewModels
             }
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         /// <summary>
         /// Archives every active task (ends the sprint).
@@ -258,12 +277,17 @@ namespace WpfAppLab6Kanban.ViewModels
             if (MessageBox.Show("Archive all tasks and clear the board?", "End Sprint",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         /// <summary>Archives every active task (ends the sprint).</summary>
         [RelayCommand(CanExecute = nameof(HasTasks))]
         private void ArchiveAll()
         {
             if (MessageBox.Show("Archive all tasks and clear the board?", "Confirm",
                     MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             {
                 _db.ArchiveAllTasks();
@@ -271,6 +295,7 @@ namespace WpfAppLab6Kanban.ViewModels
             }
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         /// <summary>Raises an event so the View can open the Archives dialog.</summary>
         [RelayCommand]
@@ -331,6 +356,8 @@ namespace WpfAppLab6Kanban.ViewModels
 
         /// <summary>Reloads all active tasks from the database.</summary>
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         /// <summary>Opens the archive viewer; reloads active tasks on return.</summary>
         [RelayCommand]
         private void ViewArchives()
@@ -359,6 +386,9 @@ namespace WpfAppLab6Kanban.ViewModels
         // -------------------------------------------------------
 
         /// <summary>Loads (or reloads) all active tasks from the database.</summary>
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         public void LoadTasks()
         {
@@ -379,7 +409,11 @@ namespace WpfAppLab6Kanban.ViewModels
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         /// <summary>Reads persisted settings and applies them to the app.</summary>
+=======
+        /// <summary>Reads persisted settings and applies them to the application.</summary>
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
         /// <summary>Reads persisted settings and applies them to the application.</summary>
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
@@ -393,10 +427,13 @@ namespace WpfAppLab6Kanban.ViewModels
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         // ──────────────────────────────────────────────────────────────────
         //  Private helpers
         // ──────────────────────────────────────────────────────────────────
 
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         private void MoveTask(KanbanTask task, string newColumn)
@@ -410,6 +447,7 @@ namespace WpfAppLab6Kanban.ViewModels
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         /// <summary>
         /// Updates HasTasks and tells the toolkit to re-evaluate
         /// ArchiveAllCommand.CanExecute — this is how the "End Sprint"
@@ -419,10 +457,15 @@ namespace WpfAppLab6Kanban.ViewModels
         {
             HasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         private void RefreshHasTasks()
         {
             HasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
             // Re-evaluate the CanExecute of ArchiveAllCommand
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             ArchiveAllCommand.NotifyCanExecuteChanged();
         }
@@ -433,7 +476,11 @@ namespace WpfAppLab6Kanban.ViewModels
             "In Progress" => InProgressTasks,
             "Done"        => DoneTasks,
 <<<<<<< HEAD
+<<<<<<< HEAD
             _             => throw new ArgumentException($"Invalid column '{column}'", nameof(column))
+=======
+            _             => throw new ArgumentException("Invalid column name", nameof(column))
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
             _             => throw new ArgumentException("Invalid column name", nameof(column))
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)

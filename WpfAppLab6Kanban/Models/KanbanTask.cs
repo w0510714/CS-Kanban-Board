@@ -1,13 +1,17 @@
 using System;
 <<<<<<< HEAD
+<<<<<<< HEAD
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WpfAppLab6Kanban.Models
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
     // ======================================================================
     //  KanbanTask — Model (EF Core entity + MVVM observable)
@@ -37,6 +41,13 @@ namespace WpfAppLab6Kanban.Models
     public partial class KanbanTask : ObservableObject
     {
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
+    // Inheriting ObservableObject gives us INotifyPropertyChanged for free.
+    // The [ObservableProperty] attribute generates the private backing field,
+    // the public property, and the OnPropertyChanged call — no boilerplate required.
+    public partial class KanbanTask : ObservableObject
+    {
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         [ObservableProperty]
         private int _id;
 
@@ -50,10 +61,14 @@ namespace WpfAppLab6Kanban.Models
         private string _priority = "Medium";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         // "Column" is a SQL reserved word.
         // [Column("Column")] tells EF Core to use that exact name (quoted).
         // This preserves compatibility with the existing kanban.db schema.
         [Column("Column")]
+=======
+        // Kanban column: "To Do", "In Progress", or "Done"
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
         // Kanban column: "To Do", "In Progress", or "Done"
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)

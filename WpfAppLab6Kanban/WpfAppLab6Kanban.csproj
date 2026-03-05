@@ -16,6 +16,9 @@
 =======
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+<<<<<<< HEAD
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+=======
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
   </ItemGroup>
 

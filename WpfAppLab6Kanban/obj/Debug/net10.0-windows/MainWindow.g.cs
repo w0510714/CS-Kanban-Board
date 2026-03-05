@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿#pragma checksum "..\..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "F786BE00C3A1BDFC17017C1FDBACB34C1831304D"
+=======
+﻿#pragma checksum "..\..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "EF487B197C7BEA1FD97D7AD722B1E60C9E5DB8D0"
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
 ﻿#pragma checksum "..\..\..\MainWindow.xaml" "{ff1816ec-aa5e-4d10-87f7-6f4963833460}" "EF487B197C7BEA1FD97D7AD722B1E60C9E5DB8D0"
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
@@ -46,7 +50,11 @@ namespace WpfAppLab6Kanban {
         
         
 <<<<<<< HEAD
+<<<<<<< HEAD
         #line 204 "..\..\..\MainWindow.xaml"
+=======
+        #line 130 "..\..\..\MainWindow.xaml"
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
         #line 130 "..\..\..\MainWindow.xaml"
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
@@ -124,7 +132,11 @@ namespace WpfAppLab6Kanban {
             this.HamburgerButton = ((System.Windows.Controls.Button)(target));
             
 <<<<<<< HEAD
+<<<<<<< HEAD
             #line 206 "..\..\..\MainWindow.xaml"
+=======
+            #line 131 "..\..\..\MainWindow.xaml"
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
 =======
             #line 131 "..\..\..\MainWindow.xaml"
 >>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
@@ -134,7 +146,10 @@ namespace WpfAppLab6Kanban {
             #line hidden
             return;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
             case 2:
             this.TodoListBox = ((System.Windows.Controls.ListBox)(target));
             
