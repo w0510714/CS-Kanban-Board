@@ -56,3 +56,5 @@ C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppL
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\App.baml
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\HelpWindow.baml
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\HelpWindow.g.cs
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\bin\Debug\net10.0-windows\CommunityToolkit.Mvvm.dll
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\WpfAppLab6Kanban.sourcelink.json
