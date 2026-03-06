@@ -74,3 +74,9 @@ C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppL
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\bin\Debug\net10.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\bin\Debug\net10.0-windows\Microsoft.Extensions.Options.dll
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\bin\Debug\net10.0-windows\Microsoft.Extensions.Primitives.dll
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\Controls\KanbanColumnControl.baml
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\Controls\SettingsToggleRow.baml
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\Controls\KanbanColumnControl.g.cs
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\Controls\SettingsToggleRow.g.cs
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\obj\Debug\net10.0-windows\WpfAppLab6Kanban_MarkupCompile.lref

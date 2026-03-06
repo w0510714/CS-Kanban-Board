@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:WpfAppLab6Kanban.Controls"
         mc:Ignorable="d"
         Title="Modern Kanban Board" Height="750" Width="1200"
         Background="{DynamicResource WindowBackgroundBrush}"
@@ -242,6 +243,22 @@
         </Border>
 
         <!-- ── Board columns ──────────────────────────────────────── -->
+        <!--
+            Topic 6 — Custom Controls
+            ==========================
+            Previously, three nearly-identical blocks of XAML (Border +
+            Grid + TextBlock + ListBox) were copy-pasted for each column.
+
+            Now each column is a KanbanColumnControl UserControl.
+            The three blocks collapse to three self-documenting lines.
+
+            Dependency properties being set here:
+              ColumnTitle      → the header label
+              ColumnColor      → accent brush (border + text colour)
+              ColumnBackground → the translucent tinted fill
+              TasksSource      → bound to the ViewModel collection
+              ItemDoubleClickCommand → routes double-click to EditTaskCommand
+        -->
         <Grid Grid.Row="1" Margin="20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -249,59 +266,29 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- TO DO — uses design-token brush TodoBrush from App.xaml -->
-            <Border Grid.Column="0" Margin="8"
-                    BorderBrush="{StaticResource TodoBrush}" BorderThickness="2.5"
-                    Background="#122196F3" CornerRadius="15">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="TO DO" FontWeight="Black" FontSize="13"
-                               Foreground="{StaticResource TodoBrush}"
-                               HorizontalAlignment="Center" Margin="0,15,0,10"/>
-                    <ListBox Grid.Row="1" x:Name="TodoListBox"
-                             ItemsSource="{Binding TodoTasks}"
-                             MouseDoubleClick="ListBox_MouseDoubleClick"/>
-                </Grid>
-            </Border>
+            <controls:KanbanColumnControl
+                Grid.Column="0"
+                ColumnTitle="TO DO"
+                ColumnColor="{StaticResource TodoBrush}"
+                ColumnBackground="#122196F3"
+                TasksSource="{Binding TodoTasks}"
+                ItemDoubleClickCommand="{Binding EditTaskCommand}"/>
 
-            <!-- IN PROGRESS -->
-            <Border Grid.Column="1" Margin="8"
-                    BorderBrush="{StaticResource InProgressBrush}" BorderThickness="2.5"
-                    Background="#12FF9800" CornerRadius="15">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="IN PROGRESS" FontWeight="Black" FontSize="13"
-                               Foreground="{StaticResource InProgressBrush}"
-                               HorizontalAlignment="Center" Margin="0,15,0,10"/>
-                    <ListBox Grid.Row="1" x:Name="InProgressListBox"
-                             ItemsSource="{Binding InProgressTasks}"
-                             MouseDoubleClick="ListBox_MouseDoubleClick"/>
-                </Grid>
-            </Border>
+            <controls:KanbanColumnControl
+                Grid.Column="1"
+                ColumnTitle="IN PROGRESS"
+                ColumnColor="{StaticResource InProgressBrush}"
+                ColumnBackground="#12FF9800"
+                TasksSource="{Binding InProgressTasks}"
+                ItemDoubleClickCommand="{Binding EditTaskCommand}"/>
 
-            <!-- DONE -->
-            <Border Grid.Column="2" Margin="8"
-                    BorderBrush="{StaticResource DoneBrush}" BorderThickness="2.5"
-                    Background="#124CAF50" CornerRadius="15">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="DONE" FontWeight="Black" FontSize="13"
-                               Foreground="{StaticResource DoneBrush}"
-                               HorizontalAlignment="Center" Margin="0,15,0,10"/>
-                    <ListBox Grid.Row="1" x:Name="DoneListBox"
-                             ItemsSource="{Binding DoneTasks}"
-                             MouseDoubleClick="ListBox_MouseDoubleClick"/>
-                </Grid>
-            </Border>
+            <controls:KanbanColumnControl
+                Grid.Column="2"
+                ColumnTitle="DONE"
+                ColumnColor="{StaticResource DoneBrush}"
+                ColumnBackground="#124CAF50"
+                TasksSource="{Binding DoneTasks}"
+                ItemDoubleClickCommand="{Binding EditTaskCommand}"/>
         </Grid>
     </Grid>
 </Window>

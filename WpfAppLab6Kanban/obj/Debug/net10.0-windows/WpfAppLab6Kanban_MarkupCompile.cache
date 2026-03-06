@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET10_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\seanj\OneDrive\Desktop\Programming in C#\Lab 6\WpfAppLab6Kanban\WpfAppLab6Kanban\App.xaml
-6-1970394974
+81983172649
 
-151512943669
+17-570129441
 2251369116627
-AddTaskWindow.xaml;ArchiveWindow.xaml;HelpWindow.xaml;MainWindow.xaml;SettingsWindow.xaml;TaskDetailWindow.xaml;
+AddTaskWindow.xaml;ArchiveWindow.xaml;Controls\KanbanColumnControl.xaml;Controls\SettingsToggleRow.xaml;HelpWindow.xaml;MainWindow.xaml;SettingsWindow.xaml;TaskDetailWindow.xaml;
 
 False
 

@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using WpfAppLab6Kanban.Data;
 using WpfAppLab6Kanban.Models;
 using WpfAppLab6Kanban.ViewModels;
@@ -77,11 +75,9 @@ namespace WpfAppLab6Kanban
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
             => HamburgerButton.ContextMenu.IsOpen = true;
 
-        // Double-clicking a task card opens the edit dialog via the ViewModel
-        private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is ListBox lb && lb.SelectedItem is KanbanTask task)
-                _vm.EditTaskCommand.Execute(task);
-        }
+        // NOTE: ListBox double-click is now handled inside KanbanColumnControl.
+        // When the user double-clicks a card, that control executes
+        // ItemDoubleClickCommand (bound to EditTaskCommand on the ViewModel),
+        // which raises RequestEditTask → OpenEditTaskDialog opens here.
     }
 }

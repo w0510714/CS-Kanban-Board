@@ -1,0 +1,32 @@
+<UserControl x:Class="WpfAppLab6Kanban.Controls.SettingsToggleRow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root">
+    <!--
+        SettingsToggleRow — Custom UserControl (Topic 6)
+        =================================================
+        Encapsulates the repeated "label + checkbox" pattern that was
+        duplicated twice (Dark Mode, Show Badges) in SettingsWindow.xaml.
+
+        Dependency properties:
+          Label     — describes the setting (e.g. "Dark Mode")
+          IsOn      — two-way bindable bool; drives the CheckBox state
+
+        Usage:
+          <controls:SettingsToggleRow Label="Dark Mode"
+                                      IsOn="{Binding SomeProp, Mode=TwoWay}"
+                                      Toggled="DarkMode_Toggled"/>
+    -->
+    <Border Style="{StaticResource SettingsCard}">
+        <DockPanel>
+            <TextBlock Text="{Binding Label, ElementName=Root}"
+                       VerticalAlignment="Center"
+                       FontSize="15"
+                       Foreground="{DynamicResource TextBrush}"/>
+            <CheckBox x:Name="InnerCheckBox"
+                      Style="{StaticResource SettingsToggle}"
+                      Checked="CheckBox_Changed"
+                      Unchecked="CheckBox_Changed"/>
+        </DockPanel>
+    </Border>
+</UserControl>
