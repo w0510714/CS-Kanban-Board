@@ -7,24 +7,6 @@ using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban.Controls
 {
-    // ==========================================================================
-    //  KanbanColumnControl — code-behind for the custom UserControl
-    // ==========================================================================
-    //
-    //  WHAT IS A DEPENDENCY PROPERTY?
-    //  ───────────────────────────────
-    //  A Dependency Property (DP) is WPF's enhanced property system.  Unlike a
-    //  plain C# auto-property, a DP:
-    //    • Can be the TARGET of a data binding  (e.g. TasksSource="{Binding TodoTasks}")
-    //    • Participates in style inheritance and animation
-    //    • Notifies the layout system automatically when its value changes
-    //    • Is registered on the WPF property system via DependencyProperty.Register
-    //
-    //  Each DP needs:
-    //    1. A static DependencyProperty field (the "key")
-    //    2. A CLR property wrapper (for designer and code-behind access)
-    //    3. Registered with the correct owner type and default value
-    // ==========================================================================
     public partial class KanbanColumnControl : UserControl
     {
         // ── ColumnTitle ────────────────────────────────────────────────────────

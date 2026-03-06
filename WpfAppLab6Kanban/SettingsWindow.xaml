@@ -16,17 +16,6 @@
 
             <TextBlock Text="Settings &amp; Personalization"
                        Style="{StaticResource DialogTitle}"/>
-
-            <!--
-                Topic 6 — Custom Controls
-                ==========================
-                Before: two identical DockPanel + CheckBox + LayoutTransform
-                blocks, each with inline ScaleTransform.
-
-                After: two SettingsToggleRow UserControl instances.
-                The Toggled RoutedEvent bubbles up so the code-behind
-                can react immediately (e.g., live Dark Mode preview).
-            -->
             <StackPanel Grid.Row="1">
                 <TextBlock Text="Themes" Style="{StaticResource SectionHeader}"/>
                 <controls:SettingsToggleRow x:Name="DarkModeRow"

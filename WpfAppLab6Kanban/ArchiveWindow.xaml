@@ -25,17 +25,6 @@
                         Padding="15,8" Height="Auto"
                         Click="DeleteAll_Click"/>
             </DockPanel>
-
-            <!--
-                Topic 5 — Container Recycling on the Archive ListView.
-                The archive can accumulate hundreds of rows; recycling
-                ensures only visible rows have live UI containers.
-                Same three-property pattern as the main Kanban columns:
-                  CanContentScroll   = True      (enables item-unit virtualization)
-                  IsVirtualizing     = True      (explicit, guards inheritance)
-                  VirtualizationMode = Recycling (pool containers; don't destroy)
-                  ScrollUnit         = Item      (whole-item scroll steps)
-            -->
             <ListView x:Name="ArchiveListView"
                       Grid.Row="1"
                       ItemsSource="{Binding ArchivedTasks}"

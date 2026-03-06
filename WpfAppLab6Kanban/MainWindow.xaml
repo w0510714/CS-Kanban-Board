@@ -92,13 +92,6 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
-
-        <!--
-            ListBox style with UI virtualization (container recycling).
-            VirtualizationMode=Recycling reuses off-screen containers instead
-            of destroying and recreating them, reducing GC pressure on scroll.
-            CanContentScroll=True is required for VirtualizingStackPanel to work.
-        -->
         <Style TargetType="ListBox">
             <Setter Property="Background"                                   Value="Transparent"/>
             <Setter Property="BorderThickness"                              Value="0"/>

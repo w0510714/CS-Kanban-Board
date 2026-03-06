@@ -2,23 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Name="Root">
-    <!--
-        KanbanColumnControl — Custom UserControl (Topic 6)
-        ===================================================
-        Encapsulates the repeated "column" pattern that was duplicated
-        three times in MainWindow.xaml (TO DO / IN PROGRESS / DONE).
-
-        Dependency properties (set by the host Window):
-          ColumnTitle         — "TO DO", "IN PROGRESS", "DONE"
-          ColumnColor         — the accent Brush for border + header text
-          ColumnBackground    — the tinted fill behind the cards
-          TasksSource         — the ObservableCollection<KanbanTask> to display
-          ItemDoubleClickCommand — ICommand executed when a card is double-clicked
-
-        The inner ListBox still binds card commands (MoveLeft, MoveRight, Delete)
-        via RelativeSource AncestorType=Window — that binding still resolves
-        correctly because this UserControl is in the Window's visual tree.
-    -->
     <Border BorderBrush="{Binding ColumnColor, ElementName=Root}"
             BorderThickness="2.5"
             Background="{Binding ColumnBackground, ElementName=Root}"

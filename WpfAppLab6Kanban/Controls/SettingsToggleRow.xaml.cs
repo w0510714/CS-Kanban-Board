@@ -3,24 +3,6 @@ using System.Windows.Controls;
 
 namespace WpfAppLab6Kanban.Controls
 {
-    // ==========================================================================
-    //  SettingsToggleRow — code-behind for the custom UserControl
-    // ==========================================================================
-    //
-    //  Demonstrates a TWO-WAY Dependency Property (IsOn).
-    //
-    //  Two-way binding challenge with UserControls:
-    //    When a CheckBox lives inside a generic UserControl, the host can't
-    //    directly bind to the inner CheckBox.IsChecked because it's private
-    //    to the control's XAML.  The solution is to expose a public DP (IsOn)
-    //    on the UserControl itself and keep it in sync with the inner CheckBox
-    //    via a PropertyChangedCallback.
-    //
-    //  ROUTED EVENT — Toggled:
-    //    We also expose a Toggled RoutedEvent so the host can react immediately
-    //    when the user flips the toggle (e.g., to preview Dark Mode live),
-    //    without needing to poll IsOn in a Save handler.
-    // ==========================================================================
     public partial class SettingsToggleRow : UserControl
     {
         // ── IsOn Dependency Property ───────────────────────────────────────────
