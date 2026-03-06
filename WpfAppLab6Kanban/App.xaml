@@ -1,13 +1,213 @@
 ﻿<Application x:Class="WpfAppLab6Kanban.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:WpfAppLab6Kanban"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#F0F2F5"/>
-        <SolidColorBrush x:Key="CardBackgroundBrush" Color="White"/>
-        <SolidColorBrush x:Key="TextBrush" Color="#1A1A1A"/>
-        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#5F6368"/>
-        <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="White"/>
+
+        <!-- ================================================================
+             DESIGN TOKENS — single source of truth for all colors/sizes.
+             Change one value here and every window updates automatically.
+             ================================================================ -->
+
+        <!-- Brand / accent -->
+        <Color x:Key="AccentColor">#1A73E8</Color>
+        <SolidColorBrush x:Key="AccentBrush"        Color="{StaticResource AccentColor}"/>
+
+        <!-- Backgrounds -->
+        <SolidColorBrush x:Key="WindowBackgroundBrush"  Color="#F0F2F5"/>
+        <SolidColorBrush x:Key="HeaderBackgroundBrush"  Color="White"/>
+        <SolidColorBrush x:Key="CardBackgroundBrush"    Color="White"/>
+
+        <!-- Text -->
+        <SolidColorBrush x:Key="TextBrush"              Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="SecondaryTextBrush"     Color="#5F6368"/>
+
+        <!-- Semantic colours -->
+        <SolidColorBrush x:Key="DangerBrush"            Color="#D32F2F"/>
+        <SolidColorBrush x:Key="DangerBgBrush"          Color="#FFF1F0"/>
+        <SolidColorBrush x:Key="MutedBrush"             Color="#DDDDDD"/>
+        <SolidColorBrush x:Key="BorderBrush"            Color="#DDDDDD"/>
+
+        <!-- Column accent colours (used by MainWindow column headers) -->
+        <SolidColorBrush x:Key="TodoBrush"              Color="#2196F3"/>
+        <SolidColorBrush x:Key="InProgressBrush"        Color="#FF9800"/>
+        <SolidColorBrush x:Key="DoneBrush"              Color="#4CAF50"/>
+
+        <!-- Spacing / shape tokens -->
+        <CornerRadius x:Key="PillRadius">20</CornerRadius>
+        <CornerRadius x:Key="CardRadius">12</CornerRadius>
+        <CornerRadius x:Key="SmallRadius">8</CornerRadius>
+
+        <!-- ================================================================
+             PRIMARY BUTTON  (blue pill — "+ New Task", "Save", "Create")
+             Usage: Style="{StaticResource PrimaryButton}"
+             ================================================================ -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background"       Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="Padding"          Value="18,8"/>
+            <Setter Property="Height"           Value="35"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="17"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.45"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Wider pill for the header "+ New Task" button -->
+        <Style x:Key="ModernPillButton" TargetType="Button"
+               BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ================================================================
+             DANGER BUTTON  (red pill — "Delete", "Nuclear Clean")
+             Usage: Style="{StaticResource DangerButton}"
+             ================================================================ -->
+        <Style x:Key="DangerButton" TargetType="Button"
+               BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="{StaticResource DangerBgBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource DangerBrush}"/>
+        </Style>
+
+        <!-- ================================================================
+             MUTED BUTTON  (grey pill — "Cancel", "Close")
+             Usage: Style="{StaticResource MutedButton}"
+             ================================================================ -->
+        <Style x:Key="MutedButton" TargetType="Button"
+               BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+        </Style>
+
+        <!-- ================================================================
+             FORM TEXT BOX  (used in Add/Detail windows)
+             Usage: Style="{StaticResource FormTextBox}"
+             ================================================================ -->
+        <Style x:Key="FormTextBox" TargetType="TextBox">
+            <Setter Property="Padding"          Value="10"/>
+            <Setter Property="FontSize"         Value="14"/>
+            <Setter Property="Background"       Value="{StaticResource CardBackgroundBrush}"/>
+            <Setter Property="Foreground"       Value="{StaticResource TextBrush}"/>
+            <Setter Property="BorderBrush"      Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="Margin"           Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="FormTextBoxMultiline" TargetType="TextBox"
+               BasedOn="{StaticResource FormTextBox}">
+            <Setter Property="Height"           Value="150"/>
+            <Setter Property="TextWrapping"     Value="Wrap"/>
+            <Setter Property="AcceptsReturn"    Value="True"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
+
+        <!-- ================================================================
+             FORM COMBO BOX
+             Usage: Style="{StaticResource FormComboBox}"
+             ================================================================ -->
+        <Style x:Key="FormComboBox" TargetType="ComboBox">
+            <Setter Property="Padding"  Value="5"/>
+            <Setter Property="Margin"   Value="0,0,0,15"/>
+        </Style>
+
+        <!-- ================================================================
+             FORM LABEL  (bold field label above inputs)
+             Usage: Style="{StaticResource FormLabel}"
+             ================================================================ -->
+        <Style x:Key="FormLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight"   Value="Bold"/>
+            <Setter Property="Foreground"   Value="{StaticResource TextBrush}"/>
+            <Setter Property="Margin"       Value="0,0,0,5"/>
+        </Style>
+
+        <!-- ================================================================
+             SECTION HEADER  (blue all-caps heading inside dialogs)
+             Usage: Style="{StaticResource SectionHeader}"
+             ================================================================ -->
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="FontWeight"   Value="Bold"/>
+            <Setter Property="Foreground"   Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Margin"       Value="0,0,0,10"/>
+        </Style>
+
+        <!-- ================================================================
+             DIALOG TITLE  (large heading at the top of dialogs)
+             Usage: Style="{StaticResource DialogTitle}"
+             ================================================================ -->
+        <Style x:Key="DialogTitle" TargetType="TextBlock">
+            <Setter Property="FontSize"     Value="22"/>
+            <Setter Property="FontWeight"   Value="Bold"/>
+            <Setter Property="Foreground"   Value="{StaticResource TextBrush}"/>
+            <Setter Property="Margin"       Value="0,0,0,20"/>
+        </Style>
+
+        <!-- ================================================================
+             SETTINGS ROW CARD  (white rounded card wrapping a toggle row)
+             Usage: Style="{StaticResource SettingsCard}"
+             ================================================================ -->
+        <Style x:Key="SettingsCard" TargetType="Border">
+            <Setter Property="Background"   Value="{StaticResource CardBackgroundBrush}"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding"      Value="15"/>
+            <Setter Property="Margin"       Value="0,0,0,15"/>
+        </Style>
+
+        <!-- ================================================================
+             SCALED CHECKBOX  (used in Settings toggles)
+             Usage: Style="{StaticResource SettingsToggle}"
+             ================================================================ -->
+        <Style x:Key="SettingsToggle" TargetType="CheckBox">
+            <Setter Property="HorizontalAlignment"  Value="Right"/>
+            <Setter Property="VerticalAlignment"    Value="Center"/>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ================================================================
+             COLUMN MOVE BUTTON  (transparent arrow buttons on task cards)
+             Usage: Style="{StaticResource CardArrowButton}"
+             ================================================================ -->
+        <Style x:Key="CardArrowButton" TargetType="Button">
+            <Setter Property="Width"            Value="30"/>
+            <Setter Property="Height"           Value="25"/>
+            <Setter Property="Background"       Value="Transparent"/>
+            <Setter Property="Foreground"       Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+        </Style>
+
     </Application.Resources>
 </Application>
