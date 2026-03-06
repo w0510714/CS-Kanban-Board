@@ -13,15 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WpfAppLab6Kanban")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bc89393f0f86a6d6a5a7634922ac2a32f54a8c85")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4af42462dd919f87b50acb8cc71cb9659fa755e")]
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4af42462dd919f87b50acb8cc71cb9659fa755e")]
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ea32ae5839a9c4079243f892db7414624fe1613d")]
 [assembly: System.Reflection.AssemblyProductAttribute("WpfAppLab6Kanban")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WpfAppLab6Kanban")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

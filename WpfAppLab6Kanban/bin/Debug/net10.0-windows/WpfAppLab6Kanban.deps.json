@@ -9,14 +9,7 @@
       "WpfAppLab6Kanban/1.0.0": {
         "dependencies": {
           "CommunityToolkit.Mvvm": "8.4.0",
-<<<<<<< HEAD
-<<<<<<< HEAD
           "Microsoft.EntityFrameworkCore.Sqlite": "9.0.2"
-=======
-=======
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
-          "Microsoft.Data.Sqlite": "9.0.2"
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         },
         "runtime": {
           "WpfAppLab6Kanban.dll": {}
@@ -28,19 +21,6 @@
             "assemblyVersion": "8.4.0.0",
             "fileVersion": "8.4.0.1"
           }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
-        }
-      },
-      "Microsoft.Data.Sqlite/9.0.2": {
-        "dependencies": {
-          "Microsoft.Data.Sqlite.Core": "9.0.2",
-          "SQLitePCLRaw.bundle_e_sqlite3": "2.1.10",
-          "SQLitePCLRaw.core": "2.1.10"
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
         }
       },
       "Microsoft.Data.Sqlite.Core/9.0.2": {
@@ -374,26 +354,6 @@
       "sha512": ""
     },
     "CommunityToolkit.Mvvm/8.4.0": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-tqVU8yc/ADO9oiTRyTnwhFN68hCwvkliMierptWOudIAvWY1mWCh5VFh+guwHJmpMwfg0J0rY+yyd5Oy7ty9Uw==",
-      "path": "communitytoolkit.mvvm/8.4.0",
-      "hashPath": "communitytoolkit.mvvm.8.4.0.nupkg.sha512"
-    },
-    "Microsoft.Data.Sqlite/9.0.2": {
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-tqVU8yc/ADO9oiTRyTnwhFN68hCwvkliMierptWOudIAvWY1mWCh5VFh+guwHJmpMwfg0J0rY+yyd5Oy7ty9Uw==",
-      "path": "communitytoolkit.mvvm/8.4.0",
-      "hashPath": "communitytoolkit.mvvm.8.4.0.nupkg.sha512"
-    },
-    "Microsoft.Data.Sqlite/9.0.2": {
->>>>>>> c46f990 (Task 1: Adopt MVVM architecture with Commands and MVVM Toolkit)
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-tqVU8yc/ADO9oiTRyTnwhFN68hCwvkliMierptWOudIAvWY1mWCh5VFh+guwHJmpMwfg0J0rY+yyd5Oy7ty9Uw==",
