@@ -67,5 +67,21 @@ namespace WpfAppLab6Kanban
         // Opens the hamburger ContextMenu on left-click (cannot be done in XAML alone).
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
             => HamburgerButton.ContextMenu.IsOpen = true;
+
+        // ── Hamburger menu item Click handlers ───────────────────────────
+        // ContextMenu lives outside the visual tree so Command bindings are
+        // unreliable when opened programmatically — Click handlers are simpler.
+
+        private void Menu_ViewArchives_Click(object sender, RoutedEventArgs e)
+            => OpenArchivesDialog();
+
+        private void Menu_ArchiveAll_Click(object sender, RoutedEventArgs e)
+            => _vm.ArchiveAllCommand.Execute(null);
+
+        private void Menu_OpenHelp_Click(object sender, RoutedEventArgs e)
+            => OpenHelpDialog();
+
+        private void Menu_OpenSettings_Click(object sender, RoutedEventArgs e)
+            => OpenSettingsDialog();
     }
 }

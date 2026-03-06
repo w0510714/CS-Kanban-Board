@@ -145,27 +145,23 @@
                             Cursor="Hand" Click="HamburgerButton_Click">
                         <Button.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="View Archives"
-                                          Command="{Binding ViewArchivesCommand}">
+                                <MenuItem Header="View Archives" Click="Menu_ViewArchives_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="📁" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="End Sprint (Archive All)"
-                                          Command="{Binding ArchiveAllCommand}">
+                                <MenuItem Header="End Sprint (Archive All)" Click="Menu_ArchiveAll_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="🧹" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <Separator/>
-                                <MenuItem Header="Help &amp; Documentation"
-                                          Command="{Binding OpenHelpCommand}">
+                                <MenuItem Header="Help &amp; Documentation" Click="Menu_OpenHelp_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="❓" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Settings"
-                                          Command="{Binding OpenSettingsCommand}">
+                                <MenuItem Header="Settings" Click="Menu_OpenSettings_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="⚙️" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
