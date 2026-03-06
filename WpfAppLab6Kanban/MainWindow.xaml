@@ -40,9 +40,20 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Task Card DataTemplate — buttons now use Commands bound to the ViewModel -->
+        <!--
+            Task Card Template
+            ==================
+            Each card's ← / → / Delete buttons now use MVVM Commands:
+              Command="{Binding DataContext.MoveLeftCommand,  RelativeSource={RelativeSource AncestorType=Window}}"
+              CommandParameter="{Binding}"   ← passes the KanbanTask to the command
+
+            This removes the need for Click event-handlers in code-behind for
+            card-level actions, which is the key MVVM improvement for this lab.
+        -->
         <DataTemplate x:Key="TaskTemplate">
-            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="12" Background="{DynamicResource CardBackgroundBrush}" Margin="0,0,0,12" Padding="15">
+            <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="12"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    Margin="0,0,0,12" Padding="15">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.05" Direction="270"/>
                 </Border.Effect>
@@ -52,15 +63,23 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap"/>
-                        <!-- Priority Badge — visibility bound to ViewModel -->
-                        <Border Grid.Column="1" Padding="6,2" CornerRadius="4" Background="#1A73E8" VerticalAlignment="Top" Margin="10,0,0,0" Opacity="0.1"
-                                Visibility="{Binding DataContext.BadgeVisibility, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Priority}" FontSize="10" FontWeight="Bold" Foreground="#1A73E8" VerticalAlignment="Top" Margin="16,2,6,2"
-                                   Visibility="{Binding DataContext.BadgeVisibility, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15"
+                                   Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap"/>
+                        <!-- Priority Badge — visibility driven by BadgeVisibility on the ViewModel -->
+                        <Border Grid.Column="1" Padding="6,2" CornerRadius="4" Background="#1A73E8"
+                                VerticalAlignment="Top" Margin="10,0,0,0" Opacity="0.1"
+                                Visibility="{Binding DataContext.BadgeVisibility,
+                                             RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Priority}" FontSize="10"
+                                   FontWeight="Bold" Foreground="#1A73E8"
+                                   VerticalAlignment="Top" Margin="16,2,6,2"
+                                   Visibility="{Binding DataContext.BadgeVisibility,
+                                                RelativeSource={RelativeSource AncestorType=Window}}"/>
                     </Grid>
                     
-                    <TextBlock Text="{Binding Description}" FontSize="13" Foreground="{DynamicResource SecondaryTextBrush}" MaxHeight="60" TextTrimming="CharacterEllipsis" Margin="0,0,0,12"/>
+                    <TextBlock Text="{Binding Description}" FontSize="13"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               MaxHeight="60" TextTrimming="CharacterEllipsis" Margin="0,0,0,12"/>
                     
                     <Separator Background="#F0F0F0" Margin="0,0,0,10" Opacity="0.5"/>
                     
@@ -70,25 +89,36 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         
-                        <!-- Move buttons: Command bound to ViewModel, task passed as CommandParameter -->
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
-                            <Button Content="←"
-                                    Command="{Binding DataContext.MoveLeftCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    CommandParameter="{Binding}"
-                                    Width="30" Height="25" Margin="0,0,5,0"
-                                    Background="Transparent" Foreground="{DynamicResource SecondaryTextBrush}" BorderThickness="0"/>
-                            <Button Content="→"
-                                    Command="{Binding DataContext.MoveRightCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    CommandParameter="{Binding}"
-                                    Width="30" Height="25"
-                                    Background="Transparent" Foreground="{DynamicResource SecondaryTextBrush}" BorderThickness="0"/>
+                            <!--
+                                MVVM Command binding:
+                                  Command         → which command to call on the ViewModel
+                                  CommandParameter → the task object passed as the argument
+                                WPF automatically enables/disables the button using CanExecute.
+                            -->
+                            <Button Content="←" Width="30" Height="25" Margin="0,0,5,0"
+                                    Background="Transparent"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    BorderThickness="0"
+                                    Command="{Binding DataContext.MoveLeftCommand,
+                                              RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"/>
+                            <Button Content="→" Width="30" Height="25"
+                                    Background="Transparent"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    BorderThickness="0"
+                                    Command="{Binding DataContext.MoveRightCommand,
+                                              RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}"/>
                         </StackPanel>
                         
-                        <!-- Delete button: Command bound to ViewModel -->
                         <Button Grid.Column="1" Content="Delete"
-                                Command="{Binding DataContext.DeleteTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="{Binding}"
-                                Background="Transparent" Foreground="#D32F2F" FontSize="11" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand"/>
+                                Background="Transparent" Foreground="#D32F2F"
+                                FontSize="11" FontWeight="SemiBold"
+                                BorderThickness="0" Cursor="Hand"
+                                Command="{Binding DataContext.DeleteTaskCommand,
+                                          RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -122,22 +152,29 @@
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                    <!-- "+ New Task" button now binds to AddTaskCommand -->
+                    <!--
+                        + New Task button uses an MVVM Command binding.
+                        The ViewModel's AddTaskCommand raises an event;
+                        the View's event handler opens the dialog.
+                    -->
                     <Button Content="+ New Task" Style="{StaticResource ModernPillButton}"
                             Command="{Binding AddTaskCommand}" Margin="0,0,15,0"/>
                     
-                    <!-- Hamburger Menu Button — click handled in code-behind (opens ContextMenu) -->
-                    <Button x:Name="HamburgerButton" Width="40" Height="40" Background="Transparent"
-                            BorderThickness="0" Cursor="Hand" Click="HamburgerButton_Click">
+                    <!-- Hamburger Menu Button (Click stays in code-behind — ContextMenu is UI-only) -->
+                    <Button x:Name="HamburgerButton" Width="40" Height="40"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
+                            Click="HamburgerButton_Click">
                         <Button.ContextMenu>
-                            <ContextMenu>
-                                <!-- Menu items now use Command bindings -->
-                                <MenuItem Header="View Archives"
-                                          Command="{Binding ViewArchivesCommand}">
+                            <ContextMenu x:Name="HamburgerMenu">
+                                <MenuItem Header="View Archives" Click="ViewArchives_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="📁" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <!--
+                                    "End Sprint" uses an MVVM Command.
+                                    IsEnabled is controlled by CanExecute (no tasks → disabled).
+                                -->
                                 <MenuItem Header="End Sprint (Archive All)"
                                           Command="{Binding ArchiveAllCommand}">
                                     <MenuItem.Icon>
@@ -145,21 +182,20 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <Separator/>
-                                <MenuItem Header="Help &amp; Documentation"
-                                          Command="{Binding OpenHelpCommand}">
+                                <MenuItem Header="Help &amp; Documentation" Click="Help_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="❓" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Settings"
-                                          Command="{Binding OpenSettingsCommand}">
+                                <MenuItem Header="Settings" Click="Settings_Click">
                                     <MenuItem.Icon>
                                         <TextBlock Text="⚙️" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>
                         </Button.ContextMenu>
-                        <TextBlock Text="≡" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextBrush}"
+                        <TextBlock Text="≡" FontSize="24" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextBrush}"
                                    HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-4,0,0"/>
                     </Button>
                 </StackPanel>
@@ -175,40 +211,49 @@
             </Grid.ColumnDefinitions>
 
             <!-- TODO Column -->
-            <Border Grid.Column="0" Margin="8" BorderBrush="#2196F3" BorderThickness="2.5" Background="#122196F3" CornerRadius="15">
+            <Border Grid.Column="0" Margin="8" BorderBrush="#2196F3" BorderThickness="2.5"
+                    Background="#122196F3" CornerRadius="15">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="TO DO" FontWeight="Black" FontSize="13" Foreground="#2196F3" HorizontalAlignment="Center" Margin="0,15,0,10"/>
-                    <ListBox Grid.Row="1" x:Name="TodoListBox" ItemsSource="{Binding TodoTasks}"
+                    <TextBlock Text="TO DO" FontWeight="Black" FontSize="13" Foreground="#2196F3"
+                               HorizontalAlignment="Center" Margin="0,15,0,10"/>
+                    <ListBox Grid.Row="1" x:Name="TodoListBox"
+                             ItemsSource="{Binding TodoTasks}"
                              MouseDoubleClick="ListBox_MouseDoubleClick"/>
                 </Grid>
             </Border>
 
             <!-- IN PROGRESS Column -->
-            <Border Grid.Column="1" Margin="8" BorderBrush="#FF9800" BorderThickness="2.5" Background="#12FF9800" CornerRadius="15">
+            <Border Grid.Column="1" Margin="8" BorderBrush="#FF9800" BorderThickness="2.5"
+                    Background="#12FF9800" CornerRadius="15">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="IN PROGRESS" FontWeight="Black" FontSize="13" Foreground="#FF9800" HorizontalAlignment="Center" Margin="0,15,0,10"/>
-                    <ListBox Grid.Row="1" x:Name="InProgressListBox" ItemsSource="{Binding InProgressTasks}"
+                    <TextBlock Text="IN PROGRESS" FontWeight="Black" FontSize="13" Foreground="#FF9800"
+                               HorizontalAlignment="Center" Margin="0,15,0,10"/>
+                    <ListBox Grid.Row="1" x:Name="InProgressListBox"
+                             ItemsSource="{Binding InProgressTasks}"
                              MouseDoubleClick="ListBox_MouseDoubleClick"/>
                 </Grid>
             </Border>
 
             <!-- DONE Column -->
-            <Border Grid.Column="2" Margin="8" BorderBrush="#4CAF50" BorderThickness="2.5" Background="#124CAF50" CornerRadius="15">
+            <Border Grid.Column="2" Margin="8" BorderBrush="#4CAF50" BorderThickness="2.5"
+                    Background="#124CAF50" CornerRadius="15">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="DONE" FontWeight="Black" FontSize="13" Foreground="#4CAF50" HorizontalAlignment="Center" Margin="0,15,0,10"/>
-                    <ListBox Grid.Row="1" x:Name="DoneListBox" ItemsSource="{Binding DoneTasks}"
+                    <TextBlock Text="DONE" FontWeight="Black" FontSize="13" Foreground="#4CAF50"
+                               HorizontalAlignment="Center" Margin="0,15,0,10"/>
+                    <ListBox Grid.Row="1" x:Name="DoneListBox"
+                             ItemsSource="{Binding DoneTasks}"
                              MouseDoubleClick="ListBox_MouseDoubleClick"/>
                 </Grid>
             </Border>

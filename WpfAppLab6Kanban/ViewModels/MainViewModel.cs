@@ -1,169 +1,144 @@
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 using WpfAppLab6Kanban.Data;
 using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban.ViewModels
 {
-    // The ViewModel owns all state and commands for the main board.
-    // [ObservableProperty] generates backing fields + INotifyPropertyChanged.
-    // [RelayCommand] generates ICommand implementations — no boilerplate required.
-    public partial class MainViewModel : ObservableObject
+    // ------------------------------------------------------------------
+    // MainViewModel — the single source of truth for the Kanban board.
+    //
+    // MVVM pattern roles:
+    //   Model      → KanbanTask, DatabaseService  (data / business logic)
+    //   View       → MainWindow.xaml              (pure UI markup)
+    //   ViewModel  → THIS CLASS                   (state + commands)
+    //
+    // The View binds its controls to properties and commands defined here.
+    // The ViewModel never imports any WPF Window/Control types — it stays
+    // fully testable without a running UI.
+    // ------------------------------------------------------------------
+    public class MainViewModel : INotifyPropertyChanged
     {
+        // ──────────────────────────────────────────────────────────────
+        // Infrastructure
+        // ──────────────────────────────────────────────────────────────
         private readonly DatabaseService _db;
 
-        // --- Observable Collections (the three Kanban columns) ---
-        public ObservableCollection<KanbanTask> TodoTasks { get; } = new();
-        public ObservableCollection<KanbanTask> InProgressTasks { get; } = new();
-        public ObservableCollection<KanbanTask> DoneTasks { get; } = new();
+        // The View subscribes to this event through data-binding so the
+        // UI refreshes automatically whenever a property value changes.
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Controls priority badge visibility; toggled from settings
-        [ObservableProperty]
+        // ──────────────────────────────────────────────────────────────
+        // Observable collections — bound to the three ListBox controls
+        // ──────────────────────────────────────────────────────────────
+        public ObservableCollection<KanbanTask> TodoTasks       { get; } = new();
+        public ObservableCollection<KanbanTask> InProgressTasks { get; } = new();
+        public ObservableCollection<KanbanTask> DoneTasks       { get; } = new();
+
+        // ──────────────────────────────────────────────────────────────
+        // BadgeVisibility — controls the priority badge in the card template
+        // ──────────────────────────────────────────────────────────────
         private Visibility _badgeVisibility = Visibility.Visible;
 
-        // Drives the "Archive All / End Sprint" menu item enabled state
-        [ObservableProperty]
-        private bool _hasTasks;
+        public Visibility BadgeVisibility
+        {
+            get => _badgeVisibility;
+            set { _badgeVisibility = value; OnPropertyChanged(); }
+        }
 
+        // ──────────────────────────────────────────────────────────────
+        // Commands — each one replaces a Click event-handler method that
+        // used to live in MainWindow.xaml.cs
+        // ──────────────────────────────────────────────────────────────
+
+        // Opens the Add-Task dialog (the View wires the window-opening logic
+        // via the RequestAddTask event below — see Event delegation section).
+        public ICommand AddTaskCommand       { get; }
+
+        // Moves a card one column to the left
+        public ICommand MoveLeftCommand      { get; }
+
+        // Moves a card one column to the right
+        public ICommand MoveRightCommand     { get; }
+
+        // Permanently deletes a card after confirmation
+        public ICommand DeleteTaskCommand    { get; }
+
+        // Archives every active task ("End Sprint")
+        public ICommand ArchiveAllCommand    { get; }
+
+        // ──────────────────────────────────────────────────────────────
+        // Event delegation — the ViewModel needs to open child windows
+        // but must NOT reference any WPF Window type directly.  Instead
+        // it raises plain .NET events; the View subscribes and opens the
+        // appropriate dialog.
+        // ──────────────────────────────────────────────────────────────
+        public event Action?            RequestAddTask;
+        public event Action<KanbanTask>? RequestEditTask;
+        public event Action?            RequestViewArchives;
+        public event Action?            RequestOpenSettings;
+        public event Action?            RequestOpenHelp;
+
+        // ──────────────────────────────────────────────────────────────
+        // Constructor
+        // ──────────────────────────────────────────────────────────────
         public MainViewModel(DatabaseService db)
         {
             _db = db;
+
+            // Wire up every command to its handler method
+            AddTaskCommand    = new RelayCommand(OnAddTask);
+            MoveLeftCommand   = new RelayCommand<KanbanTask>(OnMoveLeft,  t => t?.Column != "To Do");
+            MoveRightCommand  = new RelayCommand<KanbanTask>(OnMoveRight, t => t?.Column != "Done");
+            DeleteTaskCommand = new RelayCommand<KanbanTask>(OnDeleteTask);
+            ArchiveAllCommand = new RelayCommand(OnArchiveAll,
+                                    () => TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0);
+
+            ApplyStartupSettings();
             LoadTasks();
         }
 
-        // -------------------------------------------------------
-        //  Commands — each [RelayCommand] method becomes a
-        //  public IRelayCommand property automatically.
-        // -------------------------------------------------------
+        // ──────────────────────────────────────────────────────────────
+        // Public methods called by the View after dialog results
+        // ──────────────────────────────────────────────────────────────
 
-        /// <summary>Opens the Add-Task dialog and persists the result.</summary>
-        [RelayCommand]
-        private void AddTask()
+        // Called by MainWindow after the Add-Task dialog returns a new task
+        public void CommitNewTask(KanbanTask task)
         {
-            var win = new AddTaskWindow { Owner = Application.Current.MainWindow };
-            if (win.ShowDialog() == true && win.NewTask != null)
-            {
-                _db.AddTask(win.NewTask);
-                TodoTasks.Add(win.NewTask);
-                RefreshHasTasks();
-            }
+            _db.AddTask(task);
+            TodoTasks.Add(task);
         }
 
-        /// <summary>Opens the detail/edit dialog for the selected task.</summary>
-        [RelayCommand]
-        private void OpenTask(KanbanTask task)
+        // Called by MainWindow after the Edit-Task dialog finishes
+        public void CommitEditedTask(KanbanTask task, string originalColumn, bool isDeleted)
         {
-            if (task == null) return;
-            string originalColumn = task.Column;
-            var win = new TaskDetailWindow(task) { Owner = Application.Current.MainWindow };
-
-            if (win.ShowDialog() == true)
-            {
-                if (win.IsDeleted)
-                {
-                    _db.DeleteTask(task.Id);
-                    GetCollection(originalColumn).Remove(task);
-                }
-                else
-                {
-                    _db.UpdateTask(task);
-                    if (task.Column != originalColumn)
-                    {
-                        GetCollection(originalColumn).Remove(task);
-                        GetCollection(task.Column).Add(task);
-                    }
-                    if (task.IsArchived)
-                        GetCollection(task.Column).Remove(task);
-                }
-                RefreshHasTasks();
-            }
-        }
-
-        /// <summary>Moves a task one column to the left.</summary>
-        [RelayCommand]
-        private void MoveLeft(KanbanTask task)
-        {
-            if (task == null) return;
-            string newColumn = task.Column switch
-            {
-                "In Progress" => "To Do",
-                "Done"        => "In Progress",
-                _             => task.Column
-            };
-            MoveTask(task, newColumn);
-        }
-
-        /// <summary>Moves a task one column to the right.</summary>
-        [RelayCommand]
-        private void MoveRight(KanbanTask task)
-        {
-            if (task == null) return;
-            string newColumn = task.Column switch
-            {
-                "To Do"       => "In Progress",
-                "In Progress" => "Done",
-                _             => task.Column
-            };
-            MoveTask(task, newColumn);
-        }
-
-        /// <summary>Permanently deletes a task after confirmation.</summary>
-        [RelayCommand]
-        private void DeleteTask(KanbanTask task)
-        {
-            if (task == null) return;
-            if (MessageBox.Show($"Permanently delete '{task.Title}'?", "Confirm",
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            if (isDeleted)
             {
                 _db.DeleteTask(task.Id);
-                GetCollection(task.Column).Remove(task);
-                RefreshHasTasks();
+                GetCollection(originalColumn).Remove(task);
             }
-        }
-
-        /// <summary>Archives every active task (ends the sprint).</summary>
-        [RelayCommand(CanExecute = nameof(HasTasks))]
-        private void ArchiveAll()
-        {
-            if (MessageBox.Show("Archive all tasks and clear the board?", "Confirm",
-                    MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            else
             {
-                _db.ArchiveAllTasks();
-                LoadTasks();
+                _db.UpdateTask(task);
+
+                // Move between columns if the user changed the status
+                if (task.Column != originalColumn)
+                {
+                    GetCollection(originalColumn).Remove(task);
+                    GetCollection(task.Column).Add(task);
+                }
+
+                // Remove from the board if it was just archived
+                if (task.IsArchived)
+                    GetCollection(task.Column).Remove(task);
             }
         }
 
-        /// <summary>Opens the archive viewer; reloads active tasks on return.</summary>
-        [RelayCommand]
-        private void ViewArchives()
-        {
-            new ArchiveWindow { Owner = Application.Current.MainWindow }.ShowDialog();
-            LoadTasks();
-        }
-
-        /// <summary>Opens the settings dialog and reapplies any changed settings.</summary>
-        [RelayCommand]
-        private void OpenSettings()
-        {
-            if (new SettingsWindow { Owner = Application.Current.MainWindow }.ShowDialog() == true)
-                ApplyStartupSettings();
-        }
-
-        /// <summary>Opens the Help window.</summary>
-        [RelayCommand]
-        private void OpenHelp()
-        {
-            new HelpWindow { Owner = Application.Current.MainWindow }.ShowDialog();
-        }
-
-        // -------------------------------------------------------
-        //  Private helpers
-        // -------------------------------------------------------
-
-        /// <summary>Loads (or reloads) all active tasks from the database.</summary>
+        // Reload everything from the database (called after the Archive window closes)
         public void LoadTasks()
         {
             TodoTasks.Clear();
@@ -179,22 +154,96 @@ namespace WpfAppLab6Kanban.ViewModels
                     case "Done":        DoneTasks.Add(task);       break;
                 }
             }
-            RefreshHasTasks();
         }
 
-        /// <summary>Reads persisted settings and applies them to the application.</summary>
+        // Re-read settings from the database and apply them
         public void ApplyStartupSettings()
         {
-            bool isDark     = _db.GetSetting("DarkMode",   "0") == "1";
-            bool showBadges = _db.GetSetting("ShowBadges", "1") == "1";
-
-            new SettingsWindow().ApplyTheme(isDark);
-            BadgeVisibility = showBadges ? Visibility.Visible : Visibility.Collapsed;
+            bool showBadges  = _db.GetSetting("ShowBadges", "1") == "1";
+            BadgeVisibility  = showBadges ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        // ──────────────────────────────────────────────────────────────
+        // Command handler methods (private — the View never calls these)
+        // ──────────────────────────────────────────────────────────────
+
+        private void OnAddTask() => RequestAddTask?.Invoke();
+
+        private void OnMoveLeft(KanbanTask? task)
+        {
+            if (task is null) return;
+
+            string newColumn = task.Column switch
+            {
+                "In Progress" => "To Do",
+                "Done"        => "In Progress",
+                _             => task.Column
+            };
+            MoveTask(task, newColumn);
+        }
+
+        private void OnMoveRight(KanbanTask? task)
+        {
+            if (task is null) return;
+
+            string newColumn = task.Column switch
+            {
+                "To Do"       => "In Progress",
+                "In Progress" => "Done",
+                _             => task.Column
+            };
+            MoveTask(task, newColumn);
+        }
+
+        private void OnDeleteTask(KanbanTask? task)
+        {
+            if (task is null) return;
+
+            var result = MessageBox.Show(
+                $"Permanently delete '{task.Title}'?",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                _db.DeleteTask(task.Id);
+                GetCollection(task.Column).Remove(task);
+            }
+        }
+
+        private void OnArchiveAll()
+        {
+            var result = MessageBox.Show(
+                "Archive all tasks and clear the board?",
+                "End Sprint",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                _db.ArchiveAllTasks();
+                LoadTasks();
+            }
+        }
+
+        // ──────────────────────────────────────────────────────────────
+        // Public trigger methods — let the View raise ViewModel events
+        // without violating C#'s event encapsulation rules.
+        // (Events can only be invoked from within their declaring class.)
+        // ──────────────────────────────────────────────────────────────
+        public void OpenArchives()          => RequestViewArchives?.Invoke();
+        public void OpenSettings()          => RequestOpenSettings?.Invoke();
+        public void OpenHelp()              => RequestOpenHelp?.Invoke();
+        public void RaiseEditTask(KanbanTask task) => RequestEditTask?.Invoke(task);
+
+        // ──────────────────────────────────────────────────────────────
+        // Internal helpers
+        // ──────────────────────────────────────────────────────────────
         private void MoveTask(KanbanTask task, string newColumn)
         {
             if (newColumn == task.Column) return;
+
             string oldColumn = task.Column;
             task.Column = newColumn;
             _db.UpdateTask(task);
@@ -202,19 +251,49 @@ namespace WpfAppLab6Kanban.ViewModels
             GetCollection(newColumn).Add(task);
         }
 
-        private void RefreshHasTasks()
-        {
-            HasTasks = TodoTasks.Count > 0 || InProgressTasks.Count > 0 || DoneTasks.Count > 0;
-            // Re-evaluate the CanExecute of ArchiveAllCommand
-            ArchiveAllCommand.NotifyCanExecuteChanged();
-        }
-
         private ObservableCollection<KanbanTask> GetCollection(string column) => column switch
         {
             "To Do"       => TodoTasks,
             "In Progress" => InProgressTasks,
             "Done"        => DoneTasks,
-            _             => throw new ArgumentException("Invalid column name", nameof(column))
+            _             => throw new ArgumentException($"Unknown column '{column}'")
         };
+
+        // Raises PropertyChanged so bound controls update automatically
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
+
+    // ------------------------------------------------------------------
+    // RelayCommand<T> — typed variant for commands that receive a strongly-
+    // typed parameter (e.g., a KanbanTask) via CommandParameter binding.
+    // ------------------------------------------------------------------
+    public class RelayCommand<T> : ICommand
+    {
+        private readonly Action<T?>    _execute;
+        private readonly Func<T?, bool>? _canExecute;
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add    => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
+        }
+
+        public RelayCommand(Action<T?> execute, Func<T?, bool>? canExecute = null)
+        {
+            _execute    = execute    ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object? parameter)
+        {
+            if (_canExecute is null) return true;
+            return parameter is T t ? _canExecute(t) : _canExecute(default);
+        }
+
+        public void Execute(object? parameter)
+        {
+            _execute(parameter is T t ? t : default);
+        }
     }
 }

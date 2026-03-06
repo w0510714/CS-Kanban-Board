@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "8+oJgIjo7G8=",
+  "dgSpecHash": "F4Bl3y/sb4I=",
   "success": true,
   "projectFilePath": "C:\\Users\\seanj\\OneDrive\\Desktop\\Programming in C#\\Lab 6\\WpfAppLab6Kanban\\WpfAppLab6Kanban\\WpfAppLab6Kanban.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\seanj\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\seanj\\.nuget\\packages\\microsoft.data.sqlite\\9.0.2\\microsoft.data.sqlite.9.0.2.nupkg.sha512",
     "C:\\Users\\seanj\\.nuget\\packages\\microsoft.data.sqlite.core\\9.0.2\\microsoft.data.sqlite.core.9.0.2.nupkg.sha512",
     "C:\\Users\\seanj\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.10\\sqlitepclraw.bundle_e_sqlite3.2.1.10.nupkg.sha512",
