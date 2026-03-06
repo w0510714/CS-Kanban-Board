@@ -1,13 +1,31 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WpfAppLab6Kanban.Models
 {
-    // Inheriting ObservableObject gives us INotifyPropertyChanged for free.
-    // The [ObservableProperty] attribute generates the private backing field,
-    // the public property, and the OnPropertyChanged call — no boilerplate required.
+    // ======================================================================
+    //  KanbanTask — Model (EF Core entity + MVVM observable)
+    // ======================================================================
+    //
+    //  This class serves two roles at once:
+    //
+    //    1. EF Core entity  — EF reads/writes the Tasks table using this class.
+    //       Data annotations configure how properties map to database columns:
+    //         [Key]              → marks the primary key (Id)
+    //         [Column("Column")] → maps the C# property to the SQL column name
+    //                              "Column" is a SQL reserved word, so we must
+    //                              tell EF Core the exact column name to quote it.
+    //
+    //    2. MVVM observable  — ObservableObject + [ObservableProperty] generate
+    //       INotifyPropertyChanged so the UI refreshes when data changes.
+    //       (See Topic 2 — MVVM Toolkit)
+    // ======================================================================
     public partial class KanbanTask : ObservableObject
     {
+        // Primary key — EF Core uses this to track and update the record
+        [Key]
         [ObservableProperty]
         private int _id;
 
@@ -20,7 +38,10 @@ namespace WpfAppLab6Kanban.Models
         [ObservableProperty]
         private string _priority = "Medium";
 
-        // Kanban column: "To Do", "In Progress", or "Done"
+        // "Column" is a SQL reserved word.
+        // [Column("Column")] tells EF Core to use that exact name (quoted).
+        // This preserves compatibility with the existing kanban.db schema.
+        [Column("Column")]
         [ObservableProperty]
         private string _column = "To Do";
 

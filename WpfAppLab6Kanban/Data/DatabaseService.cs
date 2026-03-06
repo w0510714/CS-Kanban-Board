@@ -1,280 +1,178 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Data.Sqlite;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using WpfAppLab6Kanban.Models;
 
 namespace WpfAppLab6Kanban.Data
 {
-    // Manages all SQLite database operations
+    // ======================================================================
+    //  DatabaseService — EF Core edition
+    // ======================================================================
+    //
+    //  BEFORE (raw Microsoft.Data.Sqlite):
+    //    • Hand-written SQL strings for every operation
+    //    • Manual SqliteConnection + SqliteCommand + SqliteDataReader
+    //    • Manual parameter binding  (.Parameters.AddWithValue(...))
+    //    • Manual row mapping        (MapRow(SqliteDataReader reader))
+    //    • Manual null checks        (reader.IsDBNull(5) ? ... : ...)
+    //    • 281 lines total
+    //
+    //  AFTER (Entity Framework Core):
+    //    • LINQ queries instead of SQL strings — type-safe, refactorable
+    //    • EF Core manages the connection lifecycle automatically
+    //    • No parameter binding — EF Core parameterizes everything
+    //    • No row mapping — EF Core materializes entities directly
+    //    • EnsureCreated() replaces CREATE TABLE IF NOT EXISTS SQL
+    //    • ~100 lines total
+    //
+    //  Pattern used: short-lived DbContext per operation ("unit of work").
+    //  Each public method creates its own context, does one operation, then
+    //  disposes it.  This is the recommended pattern for desktop WPF apps
+    //  because it avoids stale change-tracker state between operations.
+    // ======================================================================
     public class DatabaseService
     {
-        private readonly string _connectionString;
-
         public DatabaseService()
         {
-            // Set database path to the execution directory
-            string dbPath = System.IO.Path.Combine(AppContext.BaseDirectory, "kanban.db");
-            _connectionString = $"Data Source={dbPath}";
-            InitializeDatabase();
+            // EnsureCreated creates the database file and tables if they do
+            // not yet exist.  If kanban.db is already present (from the raw
+            // Sqlite version), it is left untouched — no data is lost.
+            using var ctx = new KanbanDbContext();
+            ctx.Database.EnsureCreated();
         }
 
-        // Creates tables and applies necessary schema updates
-        private void InitializeDatabase()
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
+        // ── Settings ──────────────────────────────────────────────────────
 
-            using var cmd = new SqliteCommand(@"
-                CREATE TABLE IF NOT EXISTS Tasks (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Title TEXT NOT NULL,
-                    Description TEXT,
-                    [Column] TEXT NOT NULL,
-                    Position INTEGER NOT NULL,
-                    IsArchived INTEGER NOT NULL DEFAULT 0,
-                    CreatedAt TEXT NOT NULL,
-                    UpdatedAt TEXT NOT NULL,
-                    Priority TEXT NOT NULL DEFAULT 'Medium'
-                );
-                CREATE TABLE IF NOT EXISTS Settings (
-                    Key TEXT PRIMARY KEY,
-                    Value TEXT NOT NULL
-                );", connection);
-            cmd.ExecuteNonQuery();
-
-            // Schema migrations for older databases
-            try { using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN IsArchived INTEGER NOT NULL DEFAULT 0;", connection); migrateCmd.ExecuteNonQuery(); } catch { }
-            try { using var migrateCmd = new SqliteCommand("ALTER TABLE Tasks ADD COLUMN Priority TEXT NOT NULL DEFAULT 'Medium';", connection); migrateCmd.ExecuteNonQuery(); } catch { }
-        }
-
+        /// <summary>Returns a persisted setting value, or defaultValue if not found.</summary>
         public string GetSetting(string key, string defaultValue)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-            using var cmd = new SqliteCommand("SELECT Value FROM Settings WHERE Key = @key", connection);
-            cmd.Parameters.AddWithValue("@key", key);
-            var result = cmd.ExecuteScalar();
-            return result?.ToString() ?? defaultValue;
+            using var ctx = new KanbanDbContext();
+            // FirstOrDefault translates to: SELECT Value FROM Settings WHERE Key = @key LIMIT 1
+            return ctx.Settings.FirstOrDefault(s => s.Key == key)?.Value ?? defaultValue;
         }
 
+        /// <summary>Upserts (insert or update) a setting value.</summary>
         public void SaveSetting(string key, string value)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-            using var cmd = new SqliteCommand(@"
-                INSERT INTO Settings (Key, Value) VALUES (@key, @val)
-                ON CONFLICT(Key) DO UPDATE SET Value = @val", connection);
-            cmd.Parameters.AddWithValue("@key", key);
-            cmd.Parameters.AddWithValue("@val", value);
-            cmd.ExecuteNonQuery();
+            using var ctx = new KanbanDbContext();
+
+            // Find existing or create new — EF Core tracks which SQL to emit
+            var existing = ctx.Settings
+                              .AsTracking()           // need tracking to detect Add vs Update
+                              .FirstOrDefault(s => s.Key == key);
+
+            if (existing is null)
+                ctx.Settings.Add(new Setting { Key = key, Value = value });
+            else
+                existing.Value = value;
+
+            ctx.SaveChanges();   // EF emits INSERT or UPDATE as needed
         }
 
-        // Persist a new task to the database
+        // ── Task CRUD ─────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Inserts a new task into the database.
+        /// EF Core sets task.Id automatically after SaveChanges().
+        /// </summary>
         public KanbanTask AddTask(KanbanTask task)
         {
-            task.CreatedAt = DateTime.UtcNow;
-            task.UpdatedAt = DateTime.UtcNow;
+            task.CreatedAt = task.UpdatedAt = DateTime.UtcNow;
 
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = """
-                INSERT INTO Tasks (Title, Description, Priority, Column, Position, IsArchived, CreatedAt, UpdatedAt)
-                VALUES (@Title, @Description, @Priority, @Column, @Position, @IsArchived, @CreatedAt, @UpdatedAt);
-                SELECT last_insert_rowid();
-                """;
-
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@Title", task.Title);
-            cmd.Parameters.AddWithValue("@Description", task.Description);
-            cmd.Parameters.AddWithValue("@Priority", task.Priority);
-            cmd.Parameters.AddWithValue("@Column", task.Column);
-            cmd.Parameters.AddWithValue("@Position", task.Position);
-            cmd.Parameters.AddWithValue("@IsArchived", task.IsArchived ? 1 : 0);
-            cmd.Parameters.AddWithValue("@CreatedAt", task.CreatedAt.ToString("o"));
-            cmd.Parameters.AddWithValue("@UpdatedAt", task.UpdatedAt.ToString("o"));
-
-            var result = cmd.ExecuteScalar();
-            task.Id = Convert.ToInt32(result);
+            using var ctx = new KanbanDbContext();
+            ctx.Tasks.Add(task);
+            ctx.SaveChanges();       // EF emits: INSERT INTO Tasks (...) VALUES (...)
+                                     // and writes the generated Id back to task.Id
 
             return task;
         }
 
-        // Load all non-archived tasks
+        /// <summary>
+        /// Returns all non-archived tasks, ordered by column then position.
+        /// LINQ: ctx.Tasks.Where(...).OrderBy(...) → SELECT ... WHERE IsArchived=0
+        /// </summary>
         public List<KanbanTask> GetAllTasks()
         {
-            var tasks = new List<KanbanTask>();
-
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = """
-                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt, Priority
-                FROM   Tasks
-                WHERE  IsArchived = 0
-                ORDER  BY Column, Position;
-                """;
-
-            using var cmd = new SqliteCommand(sql, connection);
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                tasks.Add(MapRow(reader));
-            }
-
-            return tasks;
+            using var ctx = new KanbanDbContext();
+            return ctx.Tasks
+                      .Where(t => !t.IsArchived)
+                      .OrderBy(t => t.Column)
+                      .ThenBy(t => t.Position)
+                      .ToList();
         }
 
-        // Load all archived tasks
+        /// <summary>Returns all archived tasks, newest first.</summary>
         public List<KanbanTask> GetArchivedTasks()
         {
-            var tasks = new List<KanbanTask>();
-
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = """
-                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt, Priority
-                FROM   Tasks
-                WHERE  IsArchived = 1
-                ORDER  BY UpdatedAt DESC;
-                """;
-
-            using var cmd = new SqliteCommand(sql, connection);
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                tasks.Add(MapRow(reader));
-            }
-
-            return tasks;
+            using var ctx = new KanbanDbContext();
+            return ctx.Tasks
+                      .Where(t => t.IsArchived)
+                      .OrderByDescending(t => t.UpdatedAt)
+                      .ToList();
         }
 
-        // Load active tasks for a specific column
+        /// <summary>Returns active tasks in a specific column.</summary>
         public List<KanbanTask> GetTasksByColumn(string column)
         {
-            var tasks = new List<KanbanTask>();
-
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = """
-                SELECT Id, Title, Description, Column, Position, IsArchived, CreatedAt, UpdatedAt, Priority
-                FROM   Tasks
-                WHERE  IsArchived = 0 AND Column = @Column
-                ORDER  BY Position;
-                """;
-
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@Column", column);
-
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                tasks.Add(MapRow(reader));
-            }
-
-            return tasks;
+            using var ctx = new KanbanDbContext();
+            return ctx.Tasks
+                      .Where(t => !t.IsArchived && t.Column == column)
+                      .OrderBy(t => t.Position)
+                      .ToList();
         }
 
-        // Update an existing task's data
+        /// <summary>
+        /// Saves changes to an existing task.
+        /// Because the DbContext uses NoTracking by default, we use
+        /// ctx.Update(task) to tell EF Core this is a modified entity
+        /// (generates UPDATE ... WHERE Id = @id).
+        /// </summary>
         public void UpdateTask(KanbanTask task)
         {
             task.UpdatedAt = DateTime.UtcNow;
 
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = """
-                UPDATE Tasks
-                SET    Title       = @Title,
-                       Description = @Description,
-                       Priority    = @Priority,
-                       Column      = @Column,
-                       Position    = @Position,
-                       IsArchived  = @IsArchived,
-                       UpdatedAt   = @UpdatedAt
-                WHERE  Id = @Id;
-                """;
-
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@Title", task.Title);
-            cmd.Parameters.AddWithValue("@Description", task.Description);
-            cmd.Parameters.AddWithValue("@Priority", task.Priority);
-            cmd.Parameters.AddWithValue("@Column", task.Column);
-            cmd.Parameters.AddWithValue("@Position", task.Position);
-            cmd.Parameters.AddWithValue("@IsArchived", task.IsArchived ? 1 : 0);
-            cmd.Parameters.AddWithValue("@UpdatedAt", task.UpdatedAt.ToString("o"));
-            cmd.Parameters.AddWithValue("@Id", task.Id);
-
-            cmd.ExecuteNonQuery();
+            using var ctx = new KanbanDbContext();
+            ctx.Tasks.Update(task);  // EF emits: UPDATE Tasks SET ... WHERE Id = @id
+            ctx.SaveChanges();
         }
 
-        // Clear the board by archiving all active tasks
+        /// <summary>Marks every active task as archived (end-of-sprint).</summary>
         public void ArchiveAllTasks()
         {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = "UPDATE Tasks SET IsArchived = 1 WHERE IsArchived = 0;";
-
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.ExecuteNonQuery();
+            using var ctx = new KanbanDbContext();
+            // ExecuteUpdate is an EF Core 7+ bulk-update API — no per-entity round trips
+            ctx.Tasks
+               .Where(t => !t.IsArchived)
+               .ExecuteUpdate(s => s.SetProperty(t => t.IsArchived, true));
         }
 
+        /// <summary>Restores an archived task back to the active board.</summary>
         public void RestoreTask(int taskId)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = "UPDATE Tasks SET IsArchived = 0 WHERE Id = @Id;";
-
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@Id", taskId);
-            cmd.ExecuteNonQuery();
+            using var ctx = new KanbanDbContext();
+            ctx.Tasks
+               .Where(t => t.Id == taskId)
+               .ExecuteUpdate(s => s.SetProperty(t => t.IsArchived, false));
         }
 
+        /// <summary>Permanently deletes a single task by Id.</summary>
         public void DeleteTask(int taskId)
         {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = "DELETE FROM Tasks WHERE Id = @Id;";
-
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@Id", taskId);
-            cmd.ExecuteNonQuery();
+            using var ctx = new KanbanDbContext();
+            // ExecuteDelete is an EF Core 7+ bulk-delete API — no load-then-delete round trip
+            ctx.Tasks
+               .Where(t => t.Id == taskId)
+               .ExecuteDelete();
         }
 
-        // Permanently delete everything in the archive
+        /// <summary>Permanently deletes all archived tasks.</summary>
         public void DeleteAllArchived()
         {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-
-            const string sql = "DELETE FROM Tasks WHERE IsArchived = 1;";
-
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.ExecuteNonQuery();
-        }
-
-        // Helper to map a database row to a KanbanTask object
-        private static KanbanTask MapRow(SqliteDataReader reader)
-        {
-            return new KanbanTask
-            {
-                Id          = reader.GetInt32(0),
-                Title       = reader.IsDBNull(1) ? "Untitled" : reader.GetString(1),
-                Description = reader.IsDBNull(2) ? "" : reader.GetString(2),
-                Column      = reader.IsDBNull(3) ? "To Do" : reader.GetString(3),
-                Position    = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
-                IsArchived  = reader.IsDBNull(5) ? false : reader.GetInt32(5) == 1,
-                CreatedAt   = reader.IsDBNull(6) ? DateTime.UtcNow : DateTime.Parse(reader.GetString(6)),
-                UpdatedAt   = reader.IsDBNull(7) ? DateTime.UtcNow : DateTime.Parse(reader.GetString(7)),
-                Priority    = reader.IsDBNull(8) ? "Medium" : reader.GetString(8)
-            };
+            using var ctx = new KanbanDbContext();
+            ctx.Tasks
+               .Where(t => t.IsArchived)
+               .ExecuteDelete();
         }
     }
 }
