@@ -8,15 +8,16 @@ using WpfAppLab6Kanban.ViewModels;
 namespace WpfAppLab6Kanban
 {
     // ------------------------------------------------------------------
-    // MainWindow — the View in MVVM.
+    //  MainWindow — the View in MVVM.
     //
-    // Responsibilities of the View:
-    //   ✔ Create the ViewModel and set it as DataContext
-    //   ✔ Subscribe to ViewModel events that require opening child windows
-    //   ✔ Forward dialog results back to the ViewModel
-    //   ✗ NO business logic
-    //   ✗ NO database calls
-    //   ✗ NO direct manipulation of collections
+    //  Topic 2 change: Now that the toolkit generates all commands and
+    //  the ViewModel is fully self-contained, the View's only jobs are:
+    //    1. Create the ViewModel and set DataContext
+    //    2. Subscribe to ViewModel events that require opening a Window
+    //       (the VM cannot open windows itself without importing WPF)
+    //    3. Forward dialog results back to the ViewModel
+    //
+    //  Notice: no business logic, no database calls, no collections.
     // ------------------------------------------------------------------
     public partial class MainWindow : Window
     {
@@ -26,13 +27,11 @@ namespace WpfAppLab6Kanban
         {
             InitializeComponent();
 
-            // Create the ViewModel — pass in the shared database service
             _vm = new MainViewModel(new DatabaseService());
-
-            // Set as DataContext so all {Binding ...} expressions in XAML resolve here
             DataContext = _vm;
 
-            // Subscribe to ViewModel events that require a real Window to open
+            // Subscribe to the ViewModel's dialog-request events.
+            // The VM raises these; the View reacts by opening the window.
             _vm.RequestAddTask      += OpenAddTaskDialog;
             _vm.RequestEditTask     += OpenEditTaskDialog;
             _vm.RequestViewArchives += OpenArchivesDialog;
@@ -40,9 +39,7 @@ namespace WpfAppLab6Kanban
             _vm.RequestOpenHelp     += OpenHelpDialog;
         }
 
-        // ──────────────────────────────────────────────────────────────
-        // Dialog launchers  (View-only code — UI responsibility)
-        // ──────────────────────────────────────────────────────────────
+        // ── Dialog launchers ──────────────────────────────────────────
 
         private void OpenAddTaskDialog()
         {
@@ -62,7 +59,7 @@ namespace WpfAppLab6Kanban
         private void OpenArchivesDialog()
         {
             new ArchiveWindow { Owner = this }.ShowDialog();
-            _vm.LoadTasks();   // refresh board after archive changes
+            _vm.LoadTasks();
         }
 
         private void OpenSettingsDialog()
@@ -74,27 +71,17 @@ namespace WpfAppLab6Kanban
 
         private void OpenHelpDialog() => new HelpWindow { Owner = this }.ShowDialog();
 
-        // ──────────────────────────────────────────────────────────────
-        // Remaining thin event handlers
-        // (These cannot be replaced by commands because they involve
-        //  UI-specific context like the hamburger ContextMenu, or the
-        //  double-click ListBox selection pattern.)
-        // ──────────────────────────────────────────────────────────────
+        // ── Thin UI-only handlers (cannot be replaced by commands) ────
 
-        // Opens the hamburger ContextMenu on button click
+        // Opens the hamburger ContextMenu — purely a UI concern
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
             => HamburgerButton.ContextMenu.IsOpen = true;
 
-        // Menu items — delegate immediately to ViewModel methods
-        private void ViewArchives_Click(object sender, RoutedEventArgs e) => _vm.OpenArchives();
-        private void Settings_Click(object sender, RoutedEventArgs e)     => _vm.OpenSettings();
-        private void Help_Click(object sender, RoutedEventArgs e)         => _vm.OpenHelp();
-
-        // Double-click on a task card opens the detail/edit dialog
+        // Double-clicking a task card opens the edit dialog via the ViewModel
         private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is ListBox lb && lb.SelectedItem is KanbanTask task)
-                _vm.RaiseEditTask(task);
+                _vm.EditTaskCommand.Execute(task);
         }
     }
 }

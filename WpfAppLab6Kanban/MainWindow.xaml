@@ -3,25 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfAppLab6Kanban"
         mc:Ignorable="d"
         Title="Modern Kanban Board" Height="750" Width="1200"
         Background="{DynamicResource WindowBackgroundBrush}" FontFamily="Segoe UI, Arial">
-    
+
     <Window.Resources>
-        <!-- Modern Oval Button Style -->
+
+        <!-- ──────────────────────────────────────────────────────────────
+             Pill / Oval button style
+        ────────────────────────────────────────────────────────────────── -->
         <Style x:Key="ModernPillButton" TargetType="Button">
-            <Setter Property="Background" Value="#1A73E8"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="18,8"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background"       Value="#1A73E8"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="Padding"          Value="18,8"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Cursor"           Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
-                                CornerRadius="20" 
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="20"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 Padding="{TemplateBinding Padding}">
@@ -40,16 +42,23 @@
             </Style.Triggers>
         </Style>
 
-        <!--
-            Task Card Template
-            ==================
-            Each card's ← / → / Delete buttons now use MVVM Commands:
-              Command="{Binding DataContext.MoveLeftCommand,  RelativeSource={RelativeSource AncestorType=Window}}"
-              CommandParameter="{Binding}"   ← passes the KanbanTask to the command
+        <!-- ──────────────────────────────────────────────────────────────
+             Task Card DataTemplate
+             =====================
+             Topic 1 — Command bindings replace Click event handlers.
+             Topic 2 — Command names are now toolkit-generated:
+               [RelayCommand] private void MoveLeft(KanbanTask t)
+               → public IRelayCommand MoveLeftCommand  (auto-generated)
 
-            This removes the need for Click event-handlers in code-behind for
-            card-level actions, which is the key MVVM improvement for this lab.
-        -->
+             How the binding works inside a DataTemplate:
+               DataContext = KanbanTask (each item in the list)
+               To reach ViewModel commands we walk up to the Window:
+                 Command="{Binding DataContext.MoveLeftCommand,
+                           RelativeSource={RelativeSource AncestorType=Window}}"
+               CommandParameter="{Binding}" passes the KanbanTask itself.
+
+             WPF calls CanExecute() automatically — no manual IsEnabled needed.
+        ────────────────────────────────────────────────────────────────── -->
         <DataTemplate x:Key="TaskTemplate">
             <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="12"
                     Background="{DynamicResource CardBackgroundBrush}"
@@ -58,6 +67,7 @@
                     <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.05" Direction="270"/>
                 </Border.Effect>
                 <StackPanel>
+                    <!-- Title row + priority badge -->
                     <Grid Margin="0,0,0,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -65,37 +75,34 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="15"
                                    Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap"/>
-                        <!-- Priority Badge — visibility driven by BadgeVisibility on the ViewModel -->
+                        <!-- Badge background — visibility driven by ViewModel.BadgeVisibility -->
                         <Border Grid.Column="1" Padding="6,2" CornerRadius="4" Background="#1A73E8"
                                 VerticalAlignment="Top" Margin="10,0,0,0" Opacity="0.1"
                                 Visibility="{Binding DataContext.BadgeVisibility,
                                              RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        <!-- Badge text -->
                         <TextBlock Grid.Column="1" Text="{Binding Priority}" FontSize="10"
                                    FontWeight="Bold" Foreground="#1A73E8"
                                    VerticalAlignment="Top" Margin="16,2,6,2"
                                    Visibility="{Binding DataContext.BadgeVisibility,
                                                 RelativeSource={RelativeSource AncestorType=Window}}"/>
                     </Grid>
-                    
+
                     <TextBlock Text="{Binding Description}" FontSize="13"
                                Foreground="{DynamicResource SecondaryTextBrush}"
                                MaxHeight="60" TextTrimming="CharacterEllipsis" Margin="0,0,0,12"/>
-                    
+
                     <Separator Background="#F0F0F0" Margin="0,0,0,10" Opacity="0.5"/>
-                    
+
+                    <!-- Card action row -->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <StackPanel Orientation="Horizontal" Grid.Column="0">
-                            <!--
-                                MVVM Command binding:
-                                  Command         → which command to call on the ViewModel
-                                  CommandParameter → the task object passed as the argument
-                                WPF automatically enables/disables the button using CanExecute.
-                            -->
+                            <!-- ← Move Left — toolkit-generated MoveLeftCommand -->
                             <Button Content="←" Width="30" Height="25" Margin="0,0,5,0"
                                     Background="Transparent"
                                     Foreground="{DynamicResource SecondaryTextBrush}"
@@ -103,6 +110,7 @@
                                     Command="{Binding DataContext.MoveLeftCommand,
                                               RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"/>
+                            <!-- → Move Right — toolkit-generated MoveRightCommand -->
                             <Button Content="→" Width="30" Height="25"
                                     Background="Transparent"
                                     Foreground="{DynamicResource SecondaryTextBrush}"
@@ -111,7 +119,8 @@
                                               RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"/>
                         </StackPanel>
-                        
+
+                        <!-- Delete — toolkit-generated DeleteTaskCommand -->
                         <Button Grid.Column="1" Content="Delete"
                                 Background="Transparent" Foreground="#D32F2F"
                                 FontSize="11" FontWeight="SemiBold"
@@ -125,13 +134,14 @@
         </DataTemplate>
 
         <Style TargetType="ListBox">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="ItemTemplate" Value="{StaticResource TaskTemplate}"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Background"                          Value="Transparent"/>
+            <Setter Property="BorderThickness"                     Value="0"/>
+            <Setter Property="ItemTemplate"                        Value="{StaticResource TaskTemplate}"/>
+            <Setter Property="HorizontalContentAlignment"          Value="Stretch"/>
+            <Setter Property="Padding"                             Value="5"/>
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
         </Style>
+
     </Window.Resources>
 
     <Grid>
@@ -139,41 +149,62 @@
             <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <!-- Header Bar -->
+
+        <!-- ── Header Bar ─────────────────────────────────────────────── -->
         <Border Background="{DynamicResource HeaderBackgroundBrush}" Padding="25,0">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" ShadowDepth="1" Opacity="0.1" Direction="270"/>
             </Border.Effect>
             <DockPanel LastChildFill="False">
+
+                <!-- App title -->
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Kanban" FontSize="26" FontWeight="ExtraBold" Foreground="#1A73E8"/>
-                    <TextBlock Text="Board" FontSize="26" FontWeight="Light" Foreground="{DynamicResource TextBrush}" Margin="5,0,0,0"/>
+                    <TextBlock Text="Board"  FontSize="26" FontWeight="Light"
+                               Foreground="{DynamicResource TextBrush}" Margin="5,0,0,0"/>
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+
                     <!--
-                        + New Task button uses an MVVM Command binding.
-                        The ViewModel's AddTaskCommand raises an event;
-                        the View's event handler opens the dialog.
+                        Topic 2 — MVVM Toolkit command bindings
+                        ========================================
+                        All menu items and the New-Task button bind to toolkit-
+                        generated IRelayCommand properties on MainViewModel.
+                        No Click event handlers remain for board actions.
+
+                        Toolkit source-generator naming:
+                          [RelayCommand] AddTask()       → AddTaskCommand
+                          [RelayCommand] ViewArchives()  → ViewArchivesCommand
+                          [RelayCommand] ArchiveAll()    → ArchiveAllCommand  (+ CanExecute guard)
+                          [RelayCommand] OpenHelp()      → OpenHelpCommand
+                          [RelayCommand] OpenSettings()  → OpenSettingsCommand
                     -->
-                    <Button Content="+ New Task" Style="{StaticResource ModernPillButton}"
-                            Command="{Binding AddTaskCommand}" Margin="0,0,15,0"/>
-                    
-                    <!-- Hamburger Menu Button (Click stays in code-behind — ContextMenu is UI-only) -->
+                    <Button Content="+ New Task"
+                            Style="{StaticResource ModernPillButton}"
+                            Command="{Binding AddTaskCommand}"
+                            Margin="0,0,15,0"/>
+
+                    <!--
+                        Hamburger button — Click stays in code-behind ONLY to
+                        open its own ContextMenu (purely a UI mechanic).
+                    -->
                     <Button x:Name="HamburgerButton" Width="40" Height="40"
                             Background="Transparent" BorderThickness="0" Cursor="Hand"
                             Click="HamburgerButton_Click">
                         <Button.ContextMenu>
-                            <ContextMenu x:Name="HamburgerMenu">
-                                <MenuItem Header="View Archives" Click="ViewArchives_Click">
+                            <ContextMenu>
+                                <!-- Toolkit-generated command — no Click handler needed -->
+                                <MenuItem Header="View Archives"
+                                          Command="{Binding ViewArchivesCommand}">
                                     <MenuItem.Icon>
                                         <TextBlock Text="📁" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <!--
-                                    "End Sprint" uses an MVVM Command.
-                                    IsEnabled is controlled by CanExecute (no tasks → disabled).
+                                    CanExecute = HasTasks  → auto-disables when board is empty.
+                                    The toolkit calls NotifyCanExecuteChanged() after every
+                                    collection change via RefreshHasTasks() in the ViewModel.
                                 -->
                                 <MenuItem Header="End Sprint (Archive All)"
                                           Command="{Binding ArchiveAllCommand}">
@@ -182,12 +213,16 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <Separator/>
-                                <MenuItem Header="Help &amp; Documentation" Click="Help_Click">
+                                <!-- Toolkit-generated command — no Click handler needed -->
+                                <MenuItem Header="Help &amp; Documentation"
+                                          Command="{Binding OpenHelpCommand}">
                                     <MenuItem.Icon>
                                         <TextBlock Text="❓" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Settings" Click="Settings_Click">
+                                <!-- Toolkit-generated command — no Click handler needed -->
+                                <MenuItem Header="Settings"
+                                          Command="{Binding OpenSettingsCommand}">
                                     <MenuItem.Icon>
                                         <TextBlock Text="⚙️" VerticalAlignment="Center"/>
                                     </MenuItem.Icon>
@@ -196,13 +231,14 @@
                         </Button.ContextMenu>
                         <TextBlock Text="≡" FontSize="24" FontWeight="Bold"
                                    Foreground="{DynamicResource TextBrush}"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-4,0,0"/>
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Margin="0,-4,0,0"/>
                     </Button>
                 </StackPanel>
             </DockPanel>
         </Border>
 
-        <!-- Board Area -->
+        <!-- ── Board Area ─────────────────────────────────────────────── -->
         <Grid Grid.Row="1" Margin="20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -210,7 +246,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- TODO Column -->
+            <!-- TO DO column -->
             <Border Grid.Column="0" Margin="8" BorderBrush="#2196F3" BorderThickness="2.5"
                     Background="#122196F3" CornerRadius="15">
                 <Grid>
@@ -226,7 +262,7 @@
                 </Grid>
             </Border>
 
-            <!-- IN PROGRESS Column -->
+            <!-- IN PROGRESS column -->
             <Border Grid.Column="1" Margin="8" BorderBrush="#FF9800" BorderThickness="2.5"
                     Background="#12FF9800" CornerRadius="15">
                 <Grid>
@@ -242,7 +278,7 @@
                 </Grid>
             </Border>
 
-            <!-- DONE Column -->
+            <!-- DONE column -->
             <Border Grid.Column="2" Margin="8" BorderBrush="#4CAF50" BorderThickness="2.5"
                     Background="#124CAF50" CornerRadius="15">
                 <Grid>

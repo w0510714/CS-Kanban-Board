@@ -1,82 +1,39 @@
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WpfAppLab6Kanban.Models
 {
-    // Represents a single task with property-change notification for the UI
-    public class KanbanTask : INotifyPropertyChanged
+    // Inheriting ObservableObject gives us INotifyPropertyChanged for free.
+    // The [ObservableProperty] attribute generates the private backing field,
+    // the public property, and the OnPropertyChanged call — no boilerplate required.
+    public partial class KanbanTask : ObservableObject
     {
+        [ObservableProperty]
         private int _id;
+
+        [ObservableProperty]
         private string _title = string.Empty;
+
+        [ObservableProperty]
         private string _description = string.Empty;
+
+        [ObservableProperty]
         private string _priority = "Medium";
+
+        // Kanban column: "To Do", "In Progress", or "Done"
+        [ObservableProperty]
         private string _column = "To Do";
+
+        [ObservableProperty]
         private int _position;
+
+        [ObservableProperty]
         private bool _isArchived;
+
+        [ObservableProperty]
         private DateTime _createdAt;
+
+        [ObservableProperty]
         private DateTime _updatedAt;
-
-        // SQLite primary key
-        public int Id
-        {
-            get => _id;
-            set { _id = value; OnPropertyChanged(); }
-        }
-
-        public string Title
-        {
-            get => _title;
-            set { _title = value; OnPropertyChanged(); }
-        }
-
-        public string Priority
-        {
-            get => _priority;
-            set { _priority = value; OnPropertyChanged(); }
-        }
-
-        public string Description
-        {
-            get => _description;
-            set { _description = value; OnPropertyChanged(); }
-        }
-
-        // Kanban status: "To Do", "In Progress", or "Done"
-        public string Column
-        {
-            get => _column;
-            set { _column = value; OnPropertyChanged(); }
-        }
-
-        public int Position
-        {
-            get => _position;
-            set { _position = value; OnPropertyChanged(); }
-        }
-
-        public bool IsArchived
-        {
-            get => _isArchived;
-            set { _isArchived = value; OnPropertyChanged(); }
-        }
-
-        public DateTime CreatedAt
-        {
-            get => _createdAt;
-            set { _createdAt = value; OnPropertyChanged(); }
-        }
-
-        public DateTime UpdatedAt
-        {
-            get => _updatedAt;
-            set { _updatedAt = value; OnPropertyChanged(); }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        // Notifies the UI to refresh when a property changes
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
