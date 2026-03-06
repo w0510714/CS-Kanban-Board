@@ -101,14 +101,72 @@
             </Border>
         </DataTemplate>
 
-        <!-- ListBox defaults — applies to all three column listboxes -->
+        <!--
+            ListBox defaults — applies to all three Kanban column ListBoxes.
+
+            ════════════════════════════════════════════════════════════
+            TOPIC 5 — Container Recycling (UI Virtualization)
+            ════════════════════════════════════════════════════════════
+
+            WHY VIRTUALIZATION?
+            A ListBox without virtualization creates one UI element (a
+            ListBoxItem container + the full DataTemplate visual tree)
+            for every item in the collection — even items that are
+            completely off-screen.  For task cards with DropShadowEffect
+            and nested layouts, this is expensive.
+
+            WPF's VirtualizingStackPanel renders ONLY the containers
+            currently visible in the viewport, keeping memory usage and
+            render load proportional to view size rather than list size.
+
+            STANDARD vs. RECYCLING:
+              Standard  (default) — When a container scrolls out of
+                view it is DESTROYED.  When a new item scrolls in, a
+                brand-new container and full DataTemplate tree are
+                CREATED from scratch and bound to the new item.
+                → High GC pressure; heavy DataTemplates are re-inflated
+                  on every scroll step.
+
+              Recycling (Topic 5) — Out-of-view containers are kept in
+                an internal POOL instead of being destroyed.  When a
+                new item scrolls in, a pooled container is pulled out,
+                its DataContext is rebound to the new item, and it is
+                repositioned in the viewport.
+                → Zero allocation per scroll tick; the visual tree is
+                  never torn down.  Ideal for our complex task cards.
+
+            REQUIRED COMPANION PROPERTIES:
+              CanContentScroll = True
+                Makes the ScrollViewer scroll item-by-item (logical
+                units) instead of pixel-by-pixel.  This is REQUIRED for
+                the VirtualizingStackPanel to know which items are
+                truly off-screen.  Without it, virtualization is silently
+                disabled.
+
+              ScrollUnit = Item
+                Aligns scroll steps to whole items (smoother UX with
+                recycled containers that have variable heights).
+        -->
         <Style TargetType="ListBox">
-            <Setter Property="Background"                               Value="Transparent"/>
-            <Setter Property="BorderThickness"                          Value="0"/>
-            <Setter Property="ItemTemplate"                             Value="{StaticResource TaskTemplate}"/>
-            <Setter Property="HorizontalContentAlignment"               Value="Stretch"/>
-            <Setter Property="Padding"                                  Value="5"/>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="Background"                                   Value="Transparent"/>
+            <Setter Property="BorderThickness"                              Value="0"/>
+            <Setter Property="ItemTemplate"                                 Value="{StaticResource TaskTemplate}"/>
+            <Setter Property="HorizontalContentAlignment"                   Value="Stretch"/>
+            <Setter Property="Padding"                                      Value="5"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"   Value="Disabled"/>
+
+            <!-- Enable logical (item-unit) scrolling — prerequisite for virtualization -->
+            <Setter Property="ScrollViewer.CanContentScroll"                Value="True"/>
+
+            <!-- Turn on virtualization (should already be default for ListBox,
+                 but explicit is clearer and guards against style inheritance issues) -->
+            <Setter Property="VirtualizingPanel.IsVirtualizing"             Value="True"/>
+
+            <!-- KEY CHANGE: switch from Standard to Recycling mode -->
+            <Setter Property="VirtualizingPanel.VirtualizationMode"         Value="Recycling"/>
+
+            <!-- Scroll by whole items for correct recycling behaviour -->
+            <Setter Property="VirtualizingPanel.ScrollUnit"                 Value="Item"/>
         </Style>
     </Window.Resources>
 
